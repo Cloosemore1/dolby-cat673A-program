@@ -1,0 +1,139 @@
+$0000: JMP      $04F                //Program execution starts here
+
+//7 segment display values
+//Can display error readings 0-8, H-E-L-P, and boot sequence: C-r-L
+$0020: data 00FC00 //0
+$0021: data 006000 //1
+$0022: data 00DA00 //2
+$0023: data 00F200 //3
+$0024: data 006600 //4
+$0025: data 00B600 //5
+$0026: data 00BE00 //6
+$0027: data 00E000 //7
+$0028: data 00FE00 //8
+$0029: data 00F600 //9
+$002A: data 00EE00 //A
+$002B: data 003E00 //b
+$002C: data 009C00 //C
+$002D: data 007A00 //d
+$002E: data 009E00 //E
+$002F: data 008E00 //F
+$0030: data 006E00 //H
+$0031: data 001C00 //L
+$0032: data 00CE00 //P
+$0033: data 000A00 //r
+
+$004F: MOVEP    #000000,X:<<$FFE0   //GPIO Port B control register
+$0051: MOVEP    #000018,X:<<$FFE4   //GPIO Port B data register
+$0053: MOVEP    #00481B,X:<<$FFE2   //GPIO Port B data direction register
+$0055: MOVEP    #000553,X:<<$FFFE   //GPIO Port A bus control register
+$0057: MOVE     #80,A1
+$0058: MOVE     A1,X:$01
+$0059: MOVEP    #500000,Y:<<$FFE1
+$005B: MOVEP    Y:<<$FFE2,X0        //This peripheral memory address is mapped to the rotary DIP switch on the front of the card
+$005C: MOVE     #00F000,A         
+$005E: AND      X0,A    #00A000,X0  
+$0060: CMP      X0,A    NOP_MOVE    //Checking if DIP switch is set to position A
+$0061: JEQ      $185                //Jump if true - this path does not execute under normal operation
+$0062: MOVE     #000009,Y0
+$0064: MOVE     Y0,Y:$00            //Setting Y:$00 to 0x000009 - not sure what this is mapped to yet
+$0065: MOVE     #003D00,R0
+$0067: CLR      A       #000034,R1
+
+$0069: DO       #01B,$006C          //Hardware loop - $006B to 006C will execute 27 times
+$006B: MOVEM    P:(R1)+,X0          
+$006C: MOVE     X0,X:(R0)+          //Load program RAM values from $34 - $4E into X memory from $3D00 - $3D1A
+
+$006D: MOVE     A,X:$00
+$006E: MOVE     #00000C,X0          
+$0070: JSR      $192                //Display 'C' on 7 segment display - per DA20 manual, system will now perform checksum on flash ROM contents
+$0071: JSR      $1A8
+$0072: MOVE     #003900,R1
+$0074: MOVE     #000800,X1
+$0076: MOVE     X:(R1)+,X0
+$0077: MOVE     X:(R1)+,A0
+$0078: MAC      X1,X0,A X:(R1)+,X0
+$0079: MOVE     A0,A
+
+//This block of code is only executed when an error condition occurs
+//This block flashes H-E-L-P- -0- repeatedly on the 7 segment display and toggles the AHA4011 RSTN pin
+$0156: MOVE     #30,R0
+$0157: JSR      $1A6                //Display 'H'
+$0158: MOVE     #2E,R0
+$0159: JSR      $1A6                //Display 'E'
+$015A: MOVE     #31,R0
+$015B: JSR      $1A6                //Display 'L'
+$015C: MOVE     #32,R0
+$015D: JSR      $1A6                //Display 'P'
+$015E: MOVE     #35,R0
+$015F: JSR      $1A6                //Display ' '
+$0160: MOVE     #20,R0
+$0161: JSR      $1A6                //Display '0'
+$0162: MOVE     #35,R0
+$0163: JSR      $1A6                //Display ' '
+$0164: JSR      $19F                //Call to this subroutine delays
+$0165: JMP      $156
+
+//FactoryTest of Freq Synth - DIP switch mode 'A'
+//This code is executed only if the DIP switch is set to 'A' on startup, loops infinitely
+//Toggles the AHA4011 RSTN pin, then displays the current DIP switch value on the 7 segment display
+$0185: BCHG     #3,X:<<$FFE4        //Toggle AHA4011 RSTN pin
+$0186: MOVEP    Y:<<$FFE2,X0        //Read current value of rotary switch
+$0187: MOVE     #000080,X1          
+$0189: MPY      X1,X0,A #F0,X1      //Multiply 0x000080 and X0 (this acts like bit shifting X0 16 bits to the right), store in A
+$018A: MOVE     A0,A                
+$018B: AND      X1,A    #000800,X1  //Retain only bits 7-4 of A1 (presumably some other peripheral information) 
+$018D: MPY      X1,X0,A A1,Y:$FFE1  //Multiply 0x800 and X0 (this acts like bit shifting X0 12 bits to the right), store in A
+$018F: MOVE     A1,X0
+$0190: JSR      $192                //Call 7 segment display subroutine - will display whatever is currently selected on the DIP switch
+$0191: JMP      $185                //Infinite loop
+
+//7 Segment Display Control Subroutine @ $0192
+$0192: MOVE     #00000F,A
+$0194: AND      X0,A    #20,R0      //Utilize bottom 4 bits of X0 to determine data offset, load base address to R0
+$0195: MOVE     A,N0
+$0196: MOVE     #0001FF,X0          
+$0198: MOVE     X:$01,A             //Load accumulator with previous 7 segment display value
+$0199: AND      X0,A
+$019A: MOVEM    P:(R0+N0),X0        //R0 is the start of 7 segment display data - N0 is the character to be displayed
+$019B: ADD      X0,A
+$019C: MOVE     A1,X:$01            //Stores the new 7 segment data and previous other data back to X memory
+$019D: MOVEP    A1,Y:<<$FFE2        //Display new character on 7 segment display
+$019E: RTS
+
+//Delay Subroutine @ $019F
+//Produces an approximately 300ms delay by toggling AHA4011 RSTN 4,914,900 times
+$019F: MOVE     #003FFF,X1          //X1 = 16383 decimal 
+$01A1: DO       #12C,$01A4          //Hardware loop - execute through $01A4 300 times
+$01A3: REP      X1                  //Repeat next instruction 16383 times
+$01A4: BCHG     #3,X:<<$FFE4        //Toggle AHA4011 RSTN
+$01A5: RTS
+
+//7 Segment Display Update w/ Delay Subroutine @ $01A6
+$01A6: JSR      $196                //7 Segment display using program memory at R0
+$01A7: JMP      $19F                //Delay subroutine, since PC was not pushed to LR, delay subroutine RTS returns from this as well
+
+//Subroutine at $1A8 - no clue what this does. Possibly checksums the flash ROM?
+$01A8: MOVE     #0000FF,Y1          //Bit mask
+$01AA: MOVE     #000FFF,Y0          //Bit mask
+$01AC: MOVE     #000080,X1          //Multiplication factor?
+$01AE: MOVE     #006000,R0          //Load R0 with Y memory start address
+$01B0: MOVE     #003900,R1          //Load R1 with X memory start address
+
+$01B2: DO       #200,$01C2          //Hardware loop - $01B4 to 01C2 will execute 512 times
+$01B4: MOVE     Y:(R0)+,A           //Load Y memory starting at $6000 into A1
+$01B5: AND      Y1,A    Y:(R0)+,B   //Mask out LSB from A1, load B1 with the next address in Y memory
+$01B6: AND      Y1,B    A1,X0       //Mask out LSB from B1, load A1 into X0
+$01B7: MOVE     B1,A0               //Load B1 into A0 - Accumulator A now contains the LSBs of Y:R0 in A1, and Y:R0+1 in A0
+$01B8: MAC      X1,X0,A Y:(R0)+,B   //Add 0x80 * LSB of Y:R0 to A, load next Y address into B  NOTE: this is a two's complement fractional multiply 
+$01B9: AND      Y1,B    A0,X0       //Mask out LSB from B1, load A0 into X0
+$01BA: TFR      X1,B    B1,A0       //Move X1 into B1, Move B1 into A0
+$01BB: MAC      X1,X0,A #000800,X1  //Add 0x80 * X0 to A, move 0x800 into X1
+$01BD: MOVE     A0,A                //Move A0 into A1
+$01BE: AND      Y0,A    A1,X0       //Mask Lower 12 bits from A1, move A1 into X0
+$01BF: MPY      X1,X0,B B,X1        //Multiply 0x800 and X0, store in B, load B1 into X1
+$01C0: AND      Y0,B                //Mask lower 12 bits from B1
+$01C1: MOVE     B,X:(R1)+           //Move B1 into X memory starting at 3900
+$01C2: MOVE     A,X:(R1)+           //Move A1 into X memory at the next address
+
+$01C3: RTS                          //Return from subroutine

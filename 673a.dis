@@ -1,5 +1,38 @@
 $0000: JMP      $04F                //Program execution starts here
 
+//Unknown data
+$0001: data 000000
+$0002: data 000000
+$0003: data 000000
+$0004: data 000000
+$0005: data 000000
+$0006: data 000000
+$0007: data 000000
+$0008: data 000000
+$0009: data 000000
+$000A: data 000000
+$000B: data 000000
+$000C: data 000000
+$000D: data 000000
+$000E: data 000000
+$000F: data 000000
+$0010: data 000000
+$0011: data 000000
+$0012: data 000000
+$0013: data 000000
+$0014: data 0870B4
+$0015: data 00FFF4
+$0016: data 0D0018
+$0017: data 000000
+$0018: data 084631
+$0019: data 0870B4
+$001A: data 00FFF4
+$001B: data 000004
+$001C: data 000000
+$001D: data 000000
+$001E: data 000000
+$001F: data 000000
+
 //7 segment display values
 //Can display error readings 0-8, H-E-L-P, and boot sequence: C-r-L
 $0020: data 00FC00 //0
@@ -23,6 +56,36 @@ $0031: data 001C00 //L
 $0032: data 00CE00 //P
 $0033: data 000A00 //r
 
+//Unknown data
+$0034: data 00F400
+$0035: data 000000
+$0036: data 000000
+$0037: data 00F100
+$0038: data 000000
+$0039: data 000000
+$003A: data 00EA00
+$003B: data 000000
+$003C: data 000000
+$003D: data 00F200
+$003E: data 000000
+$003F: data 000000
+$0040: data 00F000
+$0041: data 000000
+$0042: data 000000
+$0043: data 00E900
+$0044: data 000000
+$0045: data 000000
+$0046: data 00EF00
+$0047: data 000000
+$0048: data 000000
+$0049: data 00ED00
+$004A: data 000000
+$004B: data 000000
+$004C: data 00EC00
+$004D: data 000000
+$004E: data 000000
+
+//Start of "first stage loader"? program
 $004F: MOVEP    #000000,X:<<$FFE0   //GPIO Port B control register
 $0051: MOVEP    #000018,X:<<$FFE4   //GPIO Port B data register
 $0053: MOVEP    #00481B,X:<<$FFE2   //GPIO Port B data direction register
@@ -33,7 +96,7 @@ $0059: MOVEP    #500000,Y:<<$FFE1
 $005B: MOVEP    Y:<<$FFE2,X0        //This peripheral memory address is mapped to the rotary DIP switch on the front of the card
 $005C: MOVE     #00F000,A         
 $005E: AND      X0,A    #00A000,X0  
-$0060: CMP      X0,A    NOP_MOVE    //Checking if DIP switch is set to position A
+$0060: CMP      X0,A                //Checking if DIP switch is set to position A
 $0061: JEQ      $185                //Jump if true - this path does not execute under normal operation
 $0062: MOVE     #000009,Y0
 $0064: MOVE     Y0,Y:$00            //Setting Y:$00 to 0x000009 - not sure what this is mapped to yet
@@ -54,27 +117,228 @@ $0076: MOVE     X:(R1)+,X0
 $0077: MOVE     X:(R1)+,A0
 $0078: MAC      X1,X0,A X:(R1)+,X0
 $0079: MOVE     A0,A
+$007A: REP      3FE
+$007B: SUB      X0,A    X:(R1)+,X0
+$007C: JEQ      $0CB
+$007D: BSET     #1,X:$00
+$007E: CLR      A       #003900,R1
+$0080: REP      00C
+$0081: MOVE     A,X:(R1)+
+$0082: MOVE     #0C,A1
+$0083: MOVE     #000001,X1
+$0085: REP      3F4
+$0086: ADD      X1,A    A1,X:(R1)+
+$0087: CLR      A       #0039C0,R1
+$0089: MOVE     #C1,A1
+$008A: REP      00B
+$008B: ADD      X1,A    A1,X:(R1)+
+$008C: MOVE     X1,X:(R1)
+$008D: MOVE     #00390D,R1
+$008F: MOVE     #00000C,X0
+$0091: DO       #004,$00BB
+$0093: JSR      $1C4
+$0094: MOVE     Y:(R0)+,Y1
+$0095: CLR      A       Y:(R0)+,Y0
+$0096: MOVE     #FF,A1
+$0097: AND      Y0,A    #000080,X1
+$0099: MOVE     A1,A0
+$009A: MAC      +Y1,X1,A        #00FFFF,X1
+$009C: MOVE     A0,A
+$009D: AND      X1,A
+$009E: JEQ      $0A1
+$009F: CMP      X1,A    #04,X1
+$00A0: JNE      $0A3
+$00A1: ENDDO
+$00A2: JMP      $13A
+$00A3: CLR      A       A1,Y0
+$00A4: MOVE     #040000,A0
+$00A6: MAC      +X1,Y0,A        #000001,X1
+$00A8: MOVE     X0,B
+$00A9: LUA      (R1)-,R0
+$00AA: MOVE     A0,Y0
+$00AB: DO       A1,$00B1
+$00AD: ADD      X1,B    X:(R1)+,X0
+$00AE: CMP      X0,B
+$00AF: JNE      $0AD
+$00B0: MOVE     B,X:(R0)
+$00B1: LUA      (R1)-,R0
+$00B2: TFR      Y0,A    #F8,X0
+$00B3: CMP      X0,A    #00,X0
+$00B4: JNE      $0B6
+$00B5: MOVE     X1,X0
+$00B6: MOVE     X0,X:(R0)
+$00B7: ADD      X1,B    X:(R1)+,X0
+$00B8: CMP      X0,B
+$00B9: JNE      $0B7
+$00BA: MOVE     B,X0
+$00BB: LUA      (R1)-,R0
+$00BC: MOVE     #003902,R1
+$00BE: MOVE     #000800,X1
+$00C0: CLR      A       X:(R1)+,X0
+$00C1: REP      3FE
+$00C2: ADD      X0,A    X:(R1)+,X0
+$00C3: MOVE     #000FFF,Y0
+$00C5: AND      Y0,A    A1,X0
+$00C6: MPY      +X1,X0,A        A1,X:$3900
+$00C8: AND      Y0,A
+$00C9: MOVE     A1,X:$3901
+$00CB: MOVE     #0C,R1
+$00CC: MOVE     #003900,N1
+$00CE: DO       #3F4,$0132
+$00D0: MOVE     X:(R1+N1),A
+$00D1: JSET     #23,A1,$0132
+$00D3: MOVE     R1,X0
+$00D4: CMP      X0,A
+$00D5: JEQ      $132
+$00D6: MOVE     X0,X:$02
+$00D7: JSR      $1C4
+$00D8: MOVE     #04,N0
+$00D9: MOVE     #0000FF,X1
+$00DB: LUA      (R0)+N0,R4
+$00DC: NOP
+$00DD: MOVE     Y:(R4)+,A
+$00DE: AND      X1,A    Y:(R4),B
+$00DF: AND      X1,B    A1,Y0
+$00E0: ASL      B
+$00E2: MPY      -X1,Y0,A    B1,X1
+$00E3: MOVE     A0,A
+$00E4: SUB      Y0,A
+$00E5: SUB      X1,A
+$00E6: MOVE     A,Y:$01
+$00E7: MOVE     #0000FF,Y1
+$00E9: MOVE     Y:$01,B
+$00EA: JCLR     #3,X:$00,$00EE
+$00EC: JCLR     #4,X:$00,$00F0
+$00EE: MOVE     #80,N0
+$00EF: JMP      $0F6
+$00F0: MOVE     #7F,N0
+$00F1: NOP
+$00F2: MOVE     Y:(R0+N0),A
+$00F3: AND      Y1,A
+$00F4: MOVE     A1,N0
+$00F5: JEQ      $0FB
+$00F6: MOVE     Y:(R0)+,A
+$00F7: DO       N0,$00FA
+$00F9: AND      Y1,A
+$00FA: ADD      A,B     Y:(R0)+,A
+$00FB: MOVE     B1,Y:$01
+$00FC: JSET     #3,X:$00,$0100
+$00FE: JSR      $1EA
+$00FF: JMP      $0E9
+$0100: CLR      A       X:$02,X0
+$0101: MOVE     #C0,A1
+$0102: CMP      X0,A    #00,B2
+$0103: JEQ      $132
+$0104: MOVE     #00FFFF,X1
+$0106: AND      X1,B
+$0107: JEQ      $10B
+$0108: BSET     #5,X:$00
+$0109: BSET     #0,X:$00
+$010A: JMP      $10C
+$010B: BCLR     #5,X:$00
+$010C: JSR      $1C4
+$010D: MOVE     #02,N0
+$010E: MOVE     #000080,X1
+$0110: MOVE     Y:(R0+N0),Y0
+$0111: MPY      X1,Y0,A #00FF00,X1
+$0113: MOVE     A0,A
+$0114: AND      X1,A    #03,N0
+$0115: MOVE     #003D00,R2
+$0117: MOVE     Y:(R0+N0),Y0
+$0118: MOVE     #0000FF,Y1
+$011A: TFR      Y1,A    A1,Y1
+$011B: AND      Y0,A    #03,N2
+$011C: ADD      Y1,A
+$011D: MOVE     A1,Y0
+$011E: JCLR     #5,X:$00,$0121
+$0120: BSET     #23,Y0
+$0121: DO       Y:$00,$012B
+$0123: MOVE     X:(R2),A
+$0124: AND      X1,A
+$0125: CMP      Y1,A
+$0126: JNE      $12B
+$0127: MOVE     Y0,X:(R2)+
+$0128: MOVE     X0,X:(R2)
+$0129: ENDDO
+$012A: JMP      $132
+$012B: MOVE     (R2)+N2
+$012C: MOVE     Y0,X:(R2)+
+$012D: CLR      A       X0,X:(R2)+
+$012E: MOVE     #01,A1
+$012F: CLR      B       Y:$00,Y0
+$0130: ADD      Y0,A    B,X:(R2)
+$0131: MOVE     A1,Y:$00
+$0132: MOVE     (R1)+
+$0133: CLR      A       X:$3D0D,X0
+$0135: CMP      X0,A    X:$3D0C,X1
+$0137: JEQ      $13A
+$0138: JCLR     #23,X1,$0166
+$013A: MOVEP    #00C000,X:<<$FFF2
+$013C: MOVEP    #000302,X:<<$FFF0
+$013E: MOVEP    #0001FF,X:<<$FFE1
+$0140: BCLR     #7,X:$0001
+$0142: MOVEP    X:$0001,Y:<<$FFE2
+$0144: MOVE     #00,N0
+$0145: MOVE     #33,R0
+$0146: BCLR     #14,X:<<$FFE4
+$0147: JSR      $1A6
+$0148: BSET     #14,X:<<$FFE4
+$0149: JSR      $19F
+$014A: MOVEP    #0000F1,X:<<$FFF4
+$014C: JCLR     #1,X:<<$FFF1,$014C
+$014E: MOVEP    #000098,X:<<$FFF4
+$0150: JCLR     #0,X:<<$FFF1,$0150
+$0152: BCLR     #7,X:$0001
+$0154: MOVEP    X:$0001,Y:<<$FFE2
 
-//This block of code is only executed when an error condition occurs
+//Second Stage Loader Not Found Error Display @ $156
 //This block flashes H-E-L-P- -0- repeatedly on the 7 segment display and toggles the AHA4011 RSTN pin
+//According to DA-20 manual, this error code means "Second stage loader not found"
 $0156: MOVE     #30,R0
-$0157: JSR      $1A6                //Display 'H'
+$0157: JSR      $1A6                //Display 'H' and delay ~300ms
 $0158: MOVE     #2E,R0
-$0159: JSR      $1A6                //Display 'E'
+$0159: JSR      $1A6                //Display 'E' and delay
 $015A: MOVE     #31,R0
-$015B: JSR      $1A6                //Display 'L'
+$015B: JSR      $1A6                //Display 'L' and delay
 $015C: MOVE     #32,R0
-$015D: JSR      $1A6                //Display 'P'
+$015D: JSR      $1A6                //Display 'P' and delay
 $015E: MOVE     #35,R0
-$015F: JSR      $1A6                //Display ' '
+$015F: JSR      $1A6                //Display ' ' and delay
 $0160: MOVE     #20,R0
-$0161: JSR      $1A6                //Display '0'
+$0161: JSR      $1A6                //Display '0' and delay
 $0162: MOVE     #35,R0
-$0163: JSR      $1A6                //Display ' '
-$0164: JSR      $19F                //Call to this subroutine delays
-$0165: JMP      $156
+$0163: JSR      $1A6                //Display ' ' and delay
+$0164: JSR      $19F                //Delay ~300ms
+$0165: JMP      $156                //Loop infinitely
 
-//FactoryTest of Freq Synth - DIP switch mode 'A'
+$0166: JSR      $1C4
+$0167: MOVE     #000006,N0
+$0169: MOVE     #000080,X1
+$016B: MOVE     (R0)+N0
+$016C: MOVE     #0000FF,Y0
+$016E: MOVE     Y:(R0)+,A
+$016F: AND      Y0,A    Y:(R0)+,B
+$0170: AND      Y0,B    A1,X0
+$0171: MOVE     B1,A0
+$0172: MAC      +X1,X0,A        Y:(R0)+,B
+$0173: AND      Y0,B    A0,R1
+$0174: MOVE     Y:(R0)+,A
+$0175: AND      Y0,A    B1,X0
+$0176: MOVE     A1,B0
+$0177: MAC      +X1,X0,B        #008000,Y1
+$0179: MOVE     R1,R2
+$017A: MOVE     Y:(R0)+,A
+$017B: DO       B0,$0183
+$017D: AND      Y0,A    Y:(R0)+,B
+$017E: AND      Y0,B    A1,X0
+$017F: MAC      +X0,Y1,A        B1,X0
+$0180: MAC      +X1,X0,A        Y:(R0)+,B
+$0181: AND      Y0,B    A0,A
+$0182: ADD      A,B     Y:(R0)+,A
+$0183: MOVEM    B1,P:(R1)+
+$0184: JMP      P:(R2)
+
+//FactoryTest of Freq Synth - DIP switch mode 'A' @ $185
 //This code is executed only if the DIP switch is set to 'A' on startup, loops infinitely
 //Toggles the AHA4011 RSTN pin, then displays the current DIP switch value on the 7 segment display
 $0185: BCHG     #3,X:<<$FFE4        //Toggle AHA4011 RSTN pin
@@ -124,16 +388,87 @@ $01B2: DO       #200,$01C2          //Hardware loop - $01B4 to 01C2 will execute
 $01B4: MOVE     Y:(R0)+,A           //Load Y memory starting at $6000 into A1
 $01B5: AND      Y1,A    Y:(R0)+,B   //Mask out LSB from A1, load B1 with the next address in Y memory
 $01B6: AND      Y1,B    A1,X0       //Mask out LSB from B1, load A1 into X0
+//A1 contains 0x0000XX from Y:$6000, B1 contains 0x0000XX from Y:$6001
 $01B7: MOVE     B1,A0               //Load B1 into A0 - Accumulator A now contains the LSBs of Y:R0 in A1, and Y:R0+1 in A0
-$01B8: MAC      X1,X0,A Y:(R0)+,B   //Add 0x80 * LSB of Y:R0 to A, load next Y address into B  NOTE: this is a two's complement fractional multiply 
+//A contains 0x0000XX0000XX from Y:$6000 and 6001, respectively
+$01B8: MAC      X1,X0,A Y:(R0)+,B   //Add 0x80 * LSB of Y:R0 to A, load next Y address into B  NOTE: this is a two's complement fractional multiply
+//This acts like shifting A1 16 bits to the right, and adding it back to A.
+//A contains 0x0000XX00XXXX, Y:$6000 Y:$6000 and Y:$6001, respectively
 $01B9: AND      Y1,B    A0,X0       //Mask out LSB from B1, load A0 into X0
+//B1 contains 0x0000XX from Y:$6002, X0 contains 0x00XXXX from Y:$6000 and Y:$6001 respectively
 $01BA: TFR      X1,B    B1,A0       //Move X1 into B1, Move B1 into A0
+//B contains 0x000080000000, A now contains 0x0000XX0000XX from Y:$6000 and Y:$6002, respectively
 $01BB: MAC      X1,X0,A #000800,X1  //Add 0x80 * X0 to A, move 0x800 into X1
+//This acts like shifting X0 16 bits to the right and adding to A
+//A contains 0x0000XX XXXXXX from Y:$6000, Y:$6000, Y:$6001, Y:$6002, respectively
 $01BD: MOVE     A0,A                //Move A0 into A1
+//A contains 0xXXXXXX XXXXXX, where XXXXXX is the LSB of Y:$6000 - $6002
 $01BE: AND      Y0,A    A1,X0       //Mask Lower 12 bits from A1, move A1 into X0
+//X0 contains XXXXXX is the LSB of Y:$6000 - $6002
+//A1 contains 000XXX
 $01BF: MPY      X1,X0,B B,X1        //Multiply 0x800 and X0, store in B, load B1 into X1
+//Acts as a shift right by 12 bits for X0, stores into B
+//B contains 0x000XXX XXX000
 $01C0: AND      Y0,B                //Mask lower 12 bits from B1
+//B1 contains 0x000XXX where 
 $01C1: MOVE     B,X:(R1)+           //Move B1 into X memory starting at 3900
+//X:$3900 contains the 
 $01C2: MOVE     A,X:(R1)+           //Move A1 into X memory at the next address
 
 $01C3: RTS                          //Return from subroutine
+
+//Subroutine at $1C4, do not know what this does
+$01C4: MOVE     X0,R0
+$01C5: MOVE     #003900,N0
+$01C7: CLR      A 
+$01C8: MOVE     X:(R0+N0),A1
+$01C9: BCLR     #23,X:(R0+N0)
+$01CA: BCLR     #23,A1
+$01CB: TST      A       #000001,X1
+$01CD: JNE      $1D1
+$01CE: BSET     #3,X:$00
+$01CF: BCLR     #4,X:$00
+$01D0: JMP      $1D7
+$01D1: CMP      X1,A 
+$01D2: JNE      $1D6
+$01D3: BSET     #3,X:$00
+$01D4: BSET     #4,X:$00
+$01D5: JMP      $1D7
+$01D6: BCLR     #3,X:$00
+$01D7: MOVE     #000300,A
+$01D9: MOVE     #FFFFFC,X1
+$01DB: AND      X0,A    X:$FFE4,B
+$01DD: AND      X1,B    A,X1    #008000,Y0
+$01DF: MAC      +X1,Y0,B        #0000FF,A
+$01E1: MOVEP    B1,X:<<$FFE4
+$01E2: AND      X0,A    #000040,X1
+$01E4: MOVE     A1,Y0
+$01E5: MOVE     #006000,A0
+$01E7: MAC      +X1,Y0,A 
+$01E8: MOVE     A0,R0
+$01E9: RTS
+
+//Subroutine at $1EA, do not know what this does
+$01EA: MOVE     #003900,R0
+$01EC: MOVE     X0,N0
+$01ED: NOP
+$01EE: CLR      A       X:(R0+N0),X0
+$01EF: BCLR     #23,X0
+$01F0: CMP      X0,A    #01,A1
+$01F1: JEQ      $1F4
+$01F2: CMP      X0,A 
+$01F3: JNE      $1C4
+$01F4: RTS
+
+//End of program - zero padded
+$01F5: data 000000
+$01F6: data 000000
+$01F7: data 000000
+$01F8: data 000000
+$01F9: data 000000
+$01FA: data 000000
+$01FB: data 000000
+$01FC: data 000000
+$01FD: data 000000
+$01FE: data 000000
+$01FF: data 000000

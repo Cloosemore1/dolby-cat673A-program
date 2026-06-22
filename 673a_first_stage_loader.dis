@@ -119,7 +119,7 @@ $0078: MAC      X1,X0,A X:(R1)+,X0
 $0079: MOVE     A0,A
 $007A: REP      3FE
 $007B: SUB      X0,A    X:(R1)+,X0
-$007C: JEQ      $0CB
+$007C: JEQ      $0CB                //This jump appears to be taken during normal operation
 $007D: BSET     #1,X:$00
 $007E: CLR      A       #003900,R1
 $0080: REP      00C
@@ -328,7 +328,7 @@ $0176: MOVE     A1,B0
 $0177: MAC      +X1,X0,B        #008000,Y1
 $0179: MOVE     R1,R2
 $017A: MOVE     Y:(R0)+,A
-$017B: DO       B0,$0183
+$017B: DO       B0,$0183            //This loop writes the second stage loader into program RAM from the ROM
 $017D: AND      Y0,A    Y:(R0)+,B
 $017E: AND      Y0,B    A1,X0
 $017F: MAC      +X0,Y1,A        B1,X0
@@ -336,7 +336,11 @@ $0180: MAC      +X1,X0,A        Y:(R0)+,B
 $0181: AND      Y0,B    A0,A
 $0182: ADD      A,B     Y:(R0)+,A
 $0183: MOVEM    B1,P:(R1)+
-$0184: JMP      P:(R2)
+
+//Program RAM at R1 now contains 0xXXXXXX from Y:$660A, 660B, and 660C, respectively - little endian encoding
+//This is the reverse of how the DSP56002 bootloader program functions!
+
+$0184: JMP      P:(R2)              //Start execution of the second stage loader program
 
 //FactoryTest of Freq Synth - DIP switch mode 'A' @ $185
 //This code is executed only if the DIP switch is set to 'A' on startup, loops infinitely

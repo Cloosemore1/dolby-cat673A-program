@@ -311,6 +311,7 @@ $0163: JSR      $1A6                //Display ' ' and delay
 $0164: JSR      $19F                //Delay ~300ms
 $0165: JMP      $156                //Loop infinitely
 
+//If second stage loader found, load it into program RAM starting at $5E0E
 $0166: JSR      $1C4
 $0167: MOVE     #000006,N0
 $0169: MOVE     #000080,X1

@@ -1,404 +1,405 @@
-$5E0E: MOVEP    Y:<<$FFE2,X0
-$5E0F: MOVE     #000800,X1
-$5E11: MPY      +X1,X0,A        #00000F,X0
-$5E13: AND      X0,A    #005FF0,R0
-$5E15: MOVE     A1,N0
-$5E16: NOP
-$5E17: MOVEM    P:(R0+N0),R0
-$5E18: NOP
-$5E19: JMP      P:(R0)
-$5E1A: MOVE     #003D00,R1
-$5E1C: MOVE     #02,N1
-$5E1D: DO       #003,$5E2A
-$5E1F: MOVE     X:(R1)+,X1
-$5E20: CLR      A       X:(R1)+N1,X0
-$5E21: CMP      X0,A 
-$5E22: 6 
-$5E23: data 005E27
-$5E24: JCLR     #23,X1,$5E2A
-$5E26: ENDDO
-$5E27: JMP      P:$5E52
-$5E29: NOP
-$5E2A: JMP      P:$5E8E
-$5E2C: MOVE     #00EB00,Y0
-$5E2E: JMP      P:$5E33
-$5E30: MOVE     #00EC00,Y0
-$5E32: MOVE     #003D00,R1
-$5E34: MOVE     #02,N1
-$5E35: MOVE     #00FF00,Y1
-$5E37: DO       Y:$00,$5E4D
-$5E39: TFR      Y1,B    X:(R1)+,X1
-$5E3A: AND      X1,B    X:(R1)+N1,A
-$5E3B: CMP      Y0,B 
-$5E3C: 6 
-$5E3D: data 005E4D
-$5E3E: ENDDO
-$5E3F: TST      A       A1,X0
-$5E40: 6 
-$5E41: data 005E47
-$5E42: MOVE     #000002,Y0
-$5E44: JMP      P:$5E61
-$5E46: JCLR     #23,X1,$5E8E
-$5E48: MOVE     #000003,Y0
-$5E4A: JMP      P:$5E61
-$5E4C: NOP
-$5E4D: MOVE     #000004,Y0
-$5E4F: JMP      P:$5E61
-$5E51: BSET     #2,X:$00
-$5E52: CLR      A       X:$3D10,X0
-$5E54: CMP      X0,A    X:$3D0F,X1
-$5E56: 6 
-$5E57: data 005E5D
-$5E58: MOVE     #000001,Y0
-$5E5A: JMP      P:$5E61
-$5E5C: JCLR     #23,X1,$5E8E
-$5E5E: MOVE     #000005,Y0
-$5E60: MOVE     #00,N0
-$5E61: MOVE     #005FEC,R0
-$5E63: 5 
-$5E64: data 005FC6
-$5E65: 5 
-$5E66: data 005FCF
-$5E67: MOVE     #005FEA,R0
-$5E69: 5 
-$5E6A: data 005FC6
-$5E6B: 5 
-$5E6C: data 005FCF
-$5E6D: MOVE     #005FED,R0
-$5E6F: 5 
-$5E70: data 005FC6
-$5E71: 5 
-$5E72: data 005FCF
-$5E73: MOVE     #005FEE,R0
-$5E75: 5 
-$5E76: data 005FC6
-$5E77: 5 
-$5E78: data 005FCF
-$5E79: MOVEP    #000000,Y:<<$FFE2
-$5E7B: 5 
-$5E7C: data 005FCF
-$5E7D: MOVE     Y0,X0
-$5E7E: 5 
-$5E7F: data 005FC1
-$5E80: 5 
-$5E81: data 005FCF
-$5E82: MOVE     #00,N0
-$5E83: MOVE     #005FEF,R0
-$5E85: 5 
-$5E86: data 005FC6
-$5E87: 5 
-$5E88: data 005FCF
-$5E89: 5 
-$5E8A: data 005FCF
-$5E8B: JMP      P:$5E62
-$5E8D: 5 
-$5E8E: data 005F9D
-$5E8F: MOVE     #06,N0
-$5E90: NOP
-$5E91: MOVE     (R0)+N0
-$5E92: 5 
-$5E93: data 005F6B
-$5E94: MOVE     #000001,A
-$5E96: CMP      X0,A    #02,A1
-$5E97: 6 
-$5E98: data 005EAE
-$5E99: CMP      X0,A    #03,A1
-$5E9A: 6 
-$5E9B: data 005EC2
-$5E9C: CMP      X0,A    #06,A1
-$5E9D: 6 
-$5E9E: 68 
-$5E9F: CMP      X0,A    #05,A1
-$5EA0: 6 
-$5EA1: data 005F28
-$5EA2: CMP      X0,A    #09,A1
-$5EA3: 6 
-$5EA4: 69 
-$5EA5: CMP      X0,A    #07,A1
-$5EA6: 6 
-$5EA7: data 005F2C
-$5EA8: CMP      X0,A 
-$5EA9: 6 
-$5EAA: data 005F32
-$5EAB: JMP      P:$5E93
-$5EAD: 5 
-$5EAE: data 005F96
-$5EAF: DO       #003,$5EB3
-$5EB1: 5 
-$5EB2: data 005F64
-$5EB3: DO       #002,$5EB7
-$5EB5: 5 
-$5EB6: data 005F96
-$5EB7: 5 
-$5EB8: data 005F64
-$5EB9: 6 
-$5EBA: data 005E93
-$5EBB: DO       A1,$5EBF
-$5EBD: 5 
-$5EBE: data 005F6B
-$5EBF: JMP      P:$5E93
-$5EC1: 5 
-$5EC2: data 005F6B
-$5EC3: MOVE     X0,Y1
-$5EC4: 5 
-$5EC5: data 005F6B
-$5EC6: MOVE     X0,Y0
-$5EC7: 5 
-$5EC8: data 005F64
-$5EC9: MOVE     A1,R1
-$5ECA: 5 
-$5ECB: data 005F64
-$5ECC: MOVE     A,X1
-$5ECD: MOVE     #03,A1
-$5ECE: CMP      Y1,A    #2AAAAB,X0
-$5ED0: 6 
-$5ED1: data 005EF4
-$5ED2: 83       #58,A1
-$5ED3: CMP      Y0,A    #59,A1
-$5ED4: 6 
-$5ED5: data 005EDF
-$5ED6: CMP      Y0,A    #50,A1
-$5ED7: 6 
-$5ED8: data 005EE6
-$5ED9: CMP      Y0,A 
-$5EDA: 6 
-$5EDB: data 005EED
-$5EDC: JMP      P:$5EF4
-$5EDE: DO       B1,$5EE3
-$5EE0: 5 
-$5EE1: data 005F5A
-$5EE2: MOVE     A1,X:(R1)+
-$5EE3: JMP      P:$5E93
-$5EE5: DO       B1,$5EEA
-$5EE7: 5 
-$5EE8: data 005F5A
-$5EE9: MOVE     A1,Y:(R1)+
-$5EEA: JMP      P:$5E93
-$5EEC: DO       B1,$5EF1
-$5EEE: 5 
-$5EEF: data 005F5A
-$5EF0: MOVEM    A1,P:(R1)+
-$5EF1: JMP      P:$5E93
-$5EF3: DO       X1,$5EF7
-$5EF5: 5 
-$5EF6: data 005F6B
-$5EF7: JMP      P:$5E93
-$5EF9: 5 
-$5EFA: data 005F6B
-$5EFB: MOVE     X0,Y1
-$5EFC: MOVEM    P:$5FD7,R1
-$5EFE: 5 
-$5EFF: data 005F6B
-$5F00: MOVEM    X0,P:-(R1)
-$5F01: 5 
-$5F02: data 005F64
-$5F03: MOVEM    A1,P:-(R1)
-$5F04: 5 
-$5F05: data 005F64
-$5F06: MOVEM    A1,P:-(R1)
-$5F07: MOVE     #03,A1
-$5F08: CMP      Y1,A    #01,A1
-$5F09: 6 
-$5F0A: data 005F1A
-$5F0B: CMP      Y1,A 
-$5F0C: 6 
-$5F0D: data 005F15
-$5F0E: DO       Y1,$5F12
-$5F10: 5 
-$5F11: data 005F6B
-$5F12: JMP      P:$5E93
-$5F14: 5 
-$5F15: data 005F7C
-$5F16: MOVE     X0,A1
-$5F17: JMP      P:$5F1C
-$5F19: 5 
-$5F1A: data 005F5A
-$5F1B: MOVE     #000001,X0
-$5F1D: MOVEM    A1,P:-(R1)
-$5F1E: MOVEM    R1,P:$5FD7
-$5F20: MOVEM    P:$5FD8,A
-$5F22: ADD      X0,A 
-$5F23: MOVEM    A1,P:$5FD8
-$5F25: JMP      P:$5E93
-$5F27: 5 
-$5F28: data 005F6B
-$5F29: JMP      P:$5E93
-$5F2B: 5 
-$5F2C: data 005F64
-$5F2D: 5 
-$5F2E: data 005F6B
-$5F2F: JMP      P:$5E93
-$5F31: 5 
-$5F32: data 005F64
-$5F33: CLR      A       A1,R4
-$5F34: MOVEM    P:$5FD8,Y0
-$5F36: CMP      Y0,A    #005E93,R1
-$5F38: 6 
-$5F39: data 005F59
-$5F3A: DO       Y0,$5F58
-$5F3C: MOVEM    P:-(R1),Y1
-$5F3D: MOVEM    P:-(R1),R2
-$5F3E: MOVEM    P:-(R1),X1
-$5F3F: MOVEM    P:-(R1),X0
-$5F40: MOVE     #000058,A
-$5F42: CMP      Y1,A    #59,A1
-$5F43: 6 
-$5F44: data 005F4E
-$5F45: CMP      Y1,A    #50,A1
-$5F46: 6 
-$5F47: data 005F52
-$5F48: CMP      Y1,A 
-$5F49: 6 
-$5F4A: data 005F56
-$5F4B: JMP      P:$5F58
-$5F4D: REP      X1
-$5F4E: MOVE     X0,X:(R2)+
-$5F4F: JMP      P:$5F58
-$5F51: REP      X1
-$5F52: MOVE     X0,Y:(R2)+
-$5F53: JMP      P:$5F58
-$5F55: REP      X1
-$5F56: MOVEM    X0,P:(R2)+
-$5F57: NOP
-$5F58: JMP      P:(R4)
-$5F59: 5 
-$5F5A: data 005F7C
-$5F5B: MOVE     X0,A
-$5F5C: 5 
-$5F5D: data 005F72
-$5F5E: ADD      X0,A 
-$5F5F: 5 
-$5F60: data 005F6B
-$5F61: ADD      X0,A 
-$5F62: RTS
-$5F63: 5 
-$5F64: data 005F72
-$5F65: MOVE     X0,A
-$5F66: 5 
-$5F67: data 005F6B
-$5F68: ADD      X0,A 
-$5F69: RTS
-$5F6A: 5 
-$5F6B: data 005F85
-$5F6C: MOVE     Y:(R0)+,X0
-$5F6D: MOVE     #FF,B1
-$5F6E: AND      X0,B 
-$5F6F: MOVE     B1,X0
-$5F70: RTS
-$5F71: 5 
-$5F72: data 005F85
-$5F73: MOVE     Y:(R0)+,X0
-$5F74: MOVE     #000080,X1
-$5F76: MPY      +X1,X0,B        #00FF00,X0
-$5F78: MOVE     B0,B
-$5F79: JMP      P:$5F6F
-$5F7B: 5 
-$5F7C: data 005F85
-$5F7D: MOVE     Y:(R0)+,X0
-$5F7E: MOVE     #008000,X1
-$5F80: MPY      +X1,X0,B        #FF,X0
-$5F81: MOVE     B0,B
-$5F82: JMP      P:$5F6F
-$5F84: MOVE     R0,X0
-$5F85: MOVE     #00007F,B
-$5F87: AND      X0,B 
-$5F88: 6 
-$5F89: data 005F95
-$5F8A: MOVEM    A1,P:$5FDA
-$5F8C: MOVEM    Y0,P:$5FDB
-$5F8E: 5 
-$5F8F: data 005FB2
-$5F90: MOVEM    P:$5FDA,A
-$5F92: MOVEM    P:$5FDB,Y0
-$5F94: RTS
-$5F95: CLR      A 
-$5F96: 5 
-$5F97: data 005F6B
-$5F98: CMP      X0,A 
-$5F99: 6 
-$5F9A: data 005F97
-$5F9B: RTS
-$5F9C: MOVEM    X0,P:$5FD9
-$5F9E: MOVE     #000300,A
-$5FA0: MOVE     #FFFFFC,X1
-$5FA2: AND      X0,A    X:$FFE4,B
-$5FA4: AND      X1,B    A,X1    #008000,Y0
-$5FA6: MAC      +X1,Y0,B        #0000FF,A
-$5FA8: MOVEP    B1,X:<<$FFE4
-$5FA9: AND      X0,A    #000040,X1
-$5FAB: MOVE     A1,X0
-$5FAC: MOVE     #006000,A0
-$5FAE: MAC      +X1,X0,A 
-$5FAF: MOVE     A0,R0
-$5FB0: RTS
-$5FB1: MOVEM    P:$5FD9,X0
-$5FB3: MOVE     #003900,R0
-$5FB5: MOVE     X0,N0
-$5FB6: NOP
-$5FB7: CLR      A       X:(R0+N0),X0
-$5FB8: BCLR     #23,X0
-$5FB9: CMP      X0,A    #01,A1
-$5FBA: 6 
-$5FBB: data 005FC0
-$5FBC: CMP      X0,A 
-$5FBD: 6 
-$5FBE: data 005F9D
-$5FBF: RTS
-$5FC0: MOVE     #00000F,A
-$5FC2: AND      X0,A    #005FDC,R0
-$5FC4: MOVE     A,N0
-$5FC5: MOVE     #0001FF,X0
-$5FC7: MOVE     X:$01,A
-$5FC8: AND      X0,A 
-$5FC9: MOVEM    P:(R0+N0),X0
-$5FCA: ADD      X0,A 
-$5FCB: MOVE     A1,X:$01
-$5FCC: MOVEP    A1,Y:<<$FFE2
-$5FCD: RTS
-$5FCE: MOVE     #003FFF,X1
-$5FD0: DO       #12C,$5FD5
-$5FD2: REP      X1
-$5FD3: NOP
-$5FD4: BCHG     #3,X:<<$FFE4
-$5FD5: RTS
-$5FD6: data 005E93
-$5FD7: NOP
+$5E0E: JSCC     $1F1
+$5E0F: MOVEP    Y:<<$FFE2,X0
+$5E10: MOVE     #000800,X1
+$5E12: MPY      X1,X0,A #00000F,X0
+$5E14: AND      X0,A    #005FF0,R0  //Get the rotary DIP switch value   
+$5E16: MOVE     A1,N0
+$5E17: NOP
+$5E18: MOVEM    P:(R0+N0),R0        //Use the DIP switch value as an index into a table of jump addresses starting at $5FF0
+$5E19: NOP
+$5E1A: JMP      P:(R0)              //Under normal operation, this jumps to $5E1B
+$5E1B: MOVE     #003D00,R1
+$5E1D: MOVE     #02,N1
+$5E1E: DO       #003,$5E2A
+$5E20: MOVE     X:(R1)+,X1
+$5E21: CLR      A       X:(R1)+N1,X0
+$5E22: CMP      X0,A 
+$5E23: 6 
+$5E24: data 005E27
+$5E25: JCLR     #23,X1,$5E2A
+$5E27: ENDDO
+$5E28: JMP      P:$5E52
+$5E2A: NOP
+$5E2B: JMP      P:$5E8E
+$5E2D: MOVE     #00EB00,Y0
+$5E2F: JMP      P:$5E33
+$5E31: MOVE     #00EC00,Y0
+$5E33: MOVE     #003D00,R1
+$5E35: MOVE     #02,N1
+$5E36: MOVE     #00FF00,Y1
+$5E38: DO       Y:$00,$5E4D
+$5E3A: TFR      Y1,B    X:(R1)+,X1
+$5E3B: AND      X1,B    X:(R1)+N1,A
+$5E3C: CMP      Y0,B 
+$5E3D: 6 
+$5E3E: data 005E4D
+$5E3F: ENDDO
+$5E40: TST      A       A1,X0
+$5E41: 6 
+$5E42: data 005E47
+$5E43: MOVE     #000002,Y0
+$5E45: JMP      P:$5E61
+$5E47: JCLR     #23,X1,$5E8E
+$5E49: MOVE     #000003,Y0
+$5E4B: JMP      P:$5E61
+$5E4D: NOP
+$5E4E: MOVE     #000004,Y0
+$5E50: JMP      P:$5E61
+$5E52: BSET     #2,X:$00
+$5E53: CLR      A       X:$3D10,X0
+$5E55: CMP      X0,A    X:$3D0F,X1
+$5E57: 6 
+$5E58: data 005E5D
+$5E59: MOVE     #000001,Y0
+$5E5B: JMP      P:$5E61
+$5E5D: JCLR     #23,X1,$5E8E
+$5E5F: MOVE     #000005,Y0
+$5E61: MOVE     #00,N0
+$5E62: MOVE     #005FEC,R0
+$5E64: 5 
+$5E65: data 005FC6
+$5E66: 5 
+$5E67: data 005FCF
+$5E68: MOVE     #005FEA,R0
+$5E6A: 5 
+$5E6B: data 005FC6
+$5E6C: 5 
+$5E6D: data 005FCF
+$5E6E: MOVE     #005FED,R0
+$5E70: 5 
+$5E71: data 005FC6
+$5E72: 5 
+$5E73: data 005FCF
+$5E74: MOVE     #005FEE,R0
+$5E76: 5 
+$5E77: data 005FC6
+$5E78: 5 
+$5E79: data 005FCF
+$5E7A: MOVEP    #000000,Y:<<$FFE2
+$5E7C: 5 
+$5E7D: data 005FCF
+$5E7E: MOVE     Y0,X0
+$5E7F: 5 
+$5E80: data 005FC1
+$5E81: 5 
+$5E82: data 005FCF
+$5E83: MOVE     #00,N0
+$5E84: MOVE     #005FEF,R0
+$5E86: 5 
+$5E87: data 005FC6
+$5E88: 5 
+$5E89: data 005FCF
+$5E8A: 5 
+$5E8B: data 005FCF
+$5E8C: JMP      P:$5E62
+$5E8E: 5 
+$5E8F: data 005F9D
+$5E90: MOVE     #06,N0
+$5E91: NOP
+$5E92: MOVE     (R0)+N0
+$5E93: 5 
+$5E94: data 005F6B
+$5E95: MOVE     #000001,A
+$5E97: CMP      X0,A    #02,A1
+$5E98: 6 
+$5E99: data 005EAE
+$5E9A: CMP      X0,A    #03,A1
+$5E9B: 6 
+$5E9C: data 005EC2
+$5E9D: CMP      X0,A    #06,A1
+$5E9E: 6 
+$5E9F: 68 
+$5EA0: CMP      X0,A    #05,A1
+$5EA1: 6 
+$5EA2: data 005F28
+$5EA3: CMP      X0,A    #09,A1
+$5EA4: 6 
+$5EA5: 69 
+$5EA6: CMP      X0,A    #07,A1
+$5EA7: 6 
+$5EA8: data 005F2C
+$5EA9: CMP      X0,A 
+$5EAA: 6 
+$5EAB: data 005F32
+$5EAC: JMP      P:$5E93
+$5EAE: 5 
+$5EAF: data 005F96
+$5EB0: DO       #003,$5EB3
+$5EB2: 5 
+$5EB3: data 005F64
+$5EB4: DO       #002,$5EB7
+$5EB6: 5 
+$5EB7: data 005F96
+$5EB8: 5 
+$5EB9: data 005F64
+$5EBA: 6 
+$5EBB: data 005E93
+$5EBC: DO       A1,$5EBF
+$5EBE: 5 
+$5EBF: data 005F6B
+$5EC0: JMP      P:$5E93
+$5EC2: 5 
+$5EC3: data 005F6B
+$5EC4: MOVE     X0,Y1
+$5EC5: 5 
+$5EC6: data 005F6B
+$5EC7: MOVE     X0,Y0
+$5EC8: 5 
+$5EC9: data 005F64
+$5ECA: MOVE     A1,R1
+$5ECB: 5 
+$5ECC: data 005F64
+$5ECD: MOVE     A,X1
+$5ECE: MOVE     #03,A1
+$5ECF: CMP      Y1,A    #2AAAAB,X0
+$5ED1: 6 
+$5ED2: data 005EF4
+$5ED3: 83       #58,A1
+$5ED4: CMP      Y0,A    #59,A1
+$5ED5: 6 
+$5ED6: data 005EDF
+$5ED7: CMP      Y0,A    #50,A1
+$5ED8: 6 
+$5ED9: data 005EE6
+$5EDA: CMP      Y0,A 
+$5EDB: 6 
+$5EDC: data 005EED
+$5EDD: JMP      P:$5EF4
+$5EDF: DO       B1,$5EE3
+$5EE1: 5 
+$5EE2: data 005F5A
+$5EE3: MOVE     A1,X:(R1)+
+$5EE4: JMP      P:$5E93
+$5EE6: DO       B1,$5EEA
+$5EE8: 5 
+$5EE9: data 005F5A
+$5EEA: MOVE     A1,Y:(R1)+
+$5EEB: JMP      P:$5E93
+$5EED: DO       B1,$5EF1
+$5EEF: 5 
+$5EF0: data 005F5A
+$5EF1: MOVEM    A1,P:(R1)+
+$5EF2: JMP      P:$5E93
+$5EF4: DO       X1,$5EF7
+$5EF6: 5 
+$5EF7: data 005F6B
+$5EF8: JMP      P:$5E93
+$5EFA: 5 
+$5EFB: data 005F6B
+$5EFC: MOVE     X0,Y1
+$5EFD: MOVEM    P:$5FD7,R1
+$5EFF: 5 
+$5F00: data 005F6B
+$5F01: MOVEM    X0,P:-(R1)
+$5F02: 5 
+$5F03: data 005F64
+$5F04: MOVEM    A1,P:-(R1)
+$5F05: 5 
+$5F06: data 005F64
+$5F07: MOVEM    A1,P:-(R1)
+$5F08: MOVE     #03,A1
+$5F09: CMP      Y1,A    #01,A1
+$5F0A: 6 
+$5F0B: data 005F1A
+$5F0C: CMP      Y1,A 
+$5F0D: 6 
+$5F0E: data 005F15
+$5F0F: DO       Y1,$5F12
+$5F11: 5 
+$5F12: data 005F6B
+$5F13: JMP      P:$5E93
+$5F15: 5 
+$5F16: data 005F7C
+$5F17: MOVE     X0,A1
+$5F18: JMP      P:$5F1C
+$5F1A: 5 
+$5F1B: data 005F5A
+$5F1C: MOVE     #000001,X0
+$5F1E: MOVEM    A1,P:-(R1)
+$5F1F: MOVEM    R1,P:$5FD7
+$5F21: MOVEM    P:$5FD8,A
+$5F23: ADD      X0,A 
+$5F24: MOVEM    A1,P:$5FD8
+$5F26: JMP      P:$5E93
+$5F28: 5 
+$5F29: data 005F6B
+$5F2A: JMP      P:$5E93
+$5F2C: 5 
+$5F2D: data 005F64
+$5F2E: 5 
+$5F2F: data 005F6B
+$5F30: JMP      P:$5E93
+$5F32: 5 
+$5F33: data 005F64
+$5F34: CLR      A       A1,R4
+$5F35: MOVEM    P:$5FD8,Y0
+$5F37: CMP      Y0,A    #005E93,R1
+$5F39: 6 
+$5F3A: data 005F59
+$5F3B: DO       Y0,$5F58
+$5F3D: MOVEM    P:-(R1),Y1
+$5F3E: MOVEM    P:-(R1),R2
+$5F3F: MOVEM    P:-(R1),X1
+$5F40: MOVEM    P:-(R1),X0
+$5F41: MOVE     #000058,A
+$5F43: CMP      Y1,A    #59,A1
+$5F44: 6 
+$5F45: data 005F4E
+$5F46: CMP      Y1,A    #50,A1
+$5F47: 6 
+$5F48: data 005F52
+$5F49: CMP      Y1,A 
+$5F4A: 6 
+$5F4B: data 005F56
+$5F4C: JMP      P:$5F58
+$5F4E: REP      X1
+$5F4F: MOVE     X0,X:(R2)+
+$5F50: JMP      P:$5F58
+$5F52: REP      X1
+$5F53: MOVE     X0,Y:(R2)+
+$5F54: JMP      P:$5F58
+$5F56: REP      X1
+$5F57: MOVEM    X0,P:(R2)+
+$5F58: NOP
+$5F59: JMP      P:(R4)
+$5F5A: 5 
+$5F5B: data 005F7C
+$5F5C: MOVE     X0,A
+$5F5D: 5 
+$5F5E: data 005F72
+$5F5F: ADD      X0,A 
+$5F60: 5 
+$5F61: data 005F6B
+$5F62: ADD      X0,A 
+$5F63: RTS
+$5F64: 5 
+$5F65: data 005F72
+$5F66: MOVE     X0,A
+$5F67: 5 
+$5F68: data 005F6B
+$5F69: ADD      X0,A 
+$5F6A: RTS
+$5F6B: 5 
+$5F6C: data 005F85
+$5F6D: MOVE     Y:(R0)+,X0
+$5F6E: MOVE     #FF,B1
+$5F6F: AND      X0,B 
+$5F70: MOVE     B1,X0
+$5F71: RTS
+$5F72: 5 
+$5F73: data 005F85
+$5F74: MOVE     Y:(R0)+,X0
+$5F75: MOVE     #000080,X1
+$5F77: MPY      +X1,X0,B        #00FF00,X0
+$5F79: MOVE     B0,B
+$5F7A: JMP      P:$5F6F
+$5F7C: 5 
+$5F7D: data 005F85
+$5F7E: MOVE     Y:(R0)+,X0
+$5F7F: MOVE     #008000,X1
+$5F81: MPY      +X1,X0,B        #FF,X0
+$5F82: MOVE     B0,B
+$5F83: JMP      P:$5F6F
+$5F85: MOVE     R0,X0
+$5F86: MOVE     #00007F,B
+$5F88: AND      X0,B 
+$5F89: 6 
+$5F8A: data 005F95
+$5F8B: MOVEM    A1,P:$5FDA
+$5F8D: MOVEM    Y0,P:$5FDB
+$5F8F: 5 
+$5F90: data 005FB2
+$5F91: MOVEM    P:$5FDA,A
+$5F93: MOVEM    P:$5FDB,Y0
+$5F95: RTS
+$5F96: CLR      A 
+$5F97: 5 
+$5F98: data 005F6B
+$5F99: CMP      X0,A 
+$5F9A: 6 
+$5F9B: data 005F97
+$5F9C: RTS
+$5F9D: MOVEM    X0,P:$5FD9
+$5F9F: MOVE     #000300,A
+$5FA1: MOVE     #FFFFFC,X1
+$5FA3: AND      X0,A    X:$FFE4,B
+$5FA5: AND      X1,B    A,X1    #008000,Y0
+$5FA7: MAC      +X1,Y0,B        #0000FF,A
+$5FA9: MOVEP    B1,X:<<$FFE4
+$5FAA: AND      X0,A    #000040,X1
+$5FAC: MOVE     A1,X0
+$5FAD: MOVE     #006000,A0
+$5FAF: MAC      +X1,X0,A 
+$5FB0: MOVE     A0,R0
+$5FB1: RTS
+$5FB2: MOVEM    P:$5FD9,X0
+$5FB4: MOVE     #003900,R0
+$5FB6: MOVE     X0,N0
+$5FB7: NOP
+$5FB8: CLR      A       X:(R0+N0),X0
+$5FB9: BCLR     #23,X0
+$5FBA: CMP      X0,A    #01,A1
+$5FBB: 6 
+$5FBC: data 005FC0
+$5FBD: CMP      X0,A 
+$5FBE: 6 
+$5FBF: data 005F9D
+$5FC0: RTS
+$5FC1: MOVE     #00000F,A
+$5FC3: AND      X0,A    #005FDC,R0
+$5FC5: MOVE     A,N0
+$5FC6: MOVE     #0001FF,X0
+$5FC8: MOVE     X:$01,A
+$5FC9: AND      X0,A 
+$5FCA: MOVEM    P:(R0+N0),X0
+$5FCB: ADD      X0,A 
+$5FCC: MOVE     A1,X:$01
+$5FCD: MOVEP    A1,Y:<<$FFE2
+$5FCE: RTS
+$5FCF: MOVE     #003FFF,X1
+$5FD1: DO       #12C,$5FD5
+$5FD3: REP      X1
+$5FD4: NOP
+$5FD5: BCHG     #3,X:<<$FFE4
+$5FD6: RTS
+$5FD7: data 005E93
 $5FD8: NOP
 $5FD9: NOP
 $5FDA: NOP
-$5FDB: data 00FC00
-$5FDC: data 006000
-$5FDD: data 00DA00
-$5FDE: data 00F200
-$5FDF: data 006600
-$5FE0: data 00B600
-$5FE1: data 00BE00
-$5FE2: data 00E000
-$5FE3: data 00FE00
-$5FE4: data 00F600
-$5FE5: data 00EE00
-$5FE6: data 003E00
-$5FE7: data 009C00
-$5FE8: data 007A00
-$5FE9: data 009E00
-$5FEA: data 008E00
-$5FEB: data 006E00
-$5FEC: data 001C00
-$5FED: data 00CE00
-$5FEE: NOP
-$5FEF: data 005E1B
+$5FDB: NOP
+$5FDC: data 00FC00
+$5FDD: data 006000
+$5FDE: data 00DA00
+$5FDF: data 00F200
+$5FE0: data 006600
+$5FE1: data 00B600
+$5FE2: data 00BE00
+$5FE3: data 00E000
+$5FE4: data 00FE00
+$5FE5: data 00F600
+$5FE6: data 00EE00
+$5FE7: data 003E00
+$5FE8: data 009C00
+$5FE9: data 007A00
+$5FEA: data 009E00
+$5FEB: data 008E00
+$5FEC: data 006E00
+$5FED: data 001C00
+$5FEE: data 00CE00
+$5FEF: NOP
 $5FF0: data 005E1B
-$5FF1: data 005E52
-$5FF2: data 005E5F
+$5FF1: data 005E1B
+$5FF2: data 005E52
 $5FF3: data 005E5F
 $5FF4: data 005E5F
 $5FF5: data 005E5F
 $5FF6: data 005E5F
-$5FF7: data 005E31
-$5FF8: data 005E2D
-$5FF9: data 005E5F
+$5FF7: data 005E5F
+$5FF8: data 005E31
+$5FF9: data 005E2D
 $5FFA: data 005E5F
 $5FFB: data 005E5F
 $5FFC: data 005E5F
 $5FFD: data 005E5F
 $5FFE: data 005E5F
+$5FFF: data 005E5F

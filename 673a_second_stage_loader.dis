@@ -8,6 +8,8 @@ $5E17: NOP
 $5E18: MOVEM    P:(R0+N0),R0        //Use the DIP switch value as an index into a table of jump addresses starting at $5FF0
 $5E19: NOP
 $5E1A: JMP      P:(R0)              //Under normal operation, this jumps to $5E1B
+
+//Start of Mode 0 - Normal Operation Execution
 $5E1B: MOVE     #003D00,R1
 $5E1D: MOVE     #02,N1
 $5E1E: DO       #003,$5E2A
@@ -51,54 +53,41 @@ $5E55: CMP      X0,A    X:$3D0F,X1
 $5E57: 6 
 $5E58: data 005E5D
 $5E59: MOVE     #000001,Y0
-$5E5B: JMP      P:$5E61
-$5E5D: JCLR     #23,X1,$5E8E
+$5E5B: JMP      P:$5E61             //Display H-E-L-P-1 repeatedly, this indicates "Missing Baseline FRED module" according to DA-20 manual
+$5E5D: JCLR     #23,X1,$5E8E        
+
+//Start of execution for modes listed as "reserved" - Flashes H-E-L-P-5 repeatedly
 $5E5F: MOVE     #000005,Y0
 $5E61: MOVE     #00,N0
 $5E62: MOVE     #005FEC,R0
-$5E64: 5 
-$5E65: data 005FC6
-$5E66: 5 
-$5E67: data 005FCF
+$5E64: JSR      P:$5FC6             //Display 'H'
+$5E66: JSR      P:$5FCF             //Delay 300ms
 $5E68: MOVE     #005FEA,R0
-$5E6A: 5 
-$5E6B: data 005FC6
-$5E6C: 5 
-$5E6D: data 005FCF
+$5E6A: JSR      P:$5FC6             //Display 'E' and delay
+$5E6C: JSR      P:$5FCF
 $5E6E: MOVE     #005FED,R0
-$5E70: 5 
-$5E71: data 005FC6
-$5E72: 5 
-$5E73: data 005FCF
+$5E70: JSR      P:$5FC6             //Display 'L' and delay
+$5E72: JSR      P:$5FCF
 $5E74: MOVE     #005FEE,R0
-$5E76: 5 
-$5E77: data 005FC6
-$5E78: 5 
-$5E79: data 005FCF
-$5E7A: MOVEP    #000000,Y:<<$FFE2
-$5E7C: 5 
-$5E7D: data 005FCF
+$5E76: JSR      P:$5FC6             //Display 'P' and delay
+$5E78: JSR      P:$5FCF
+$5E7A: MOVEP    #000000,Y:<<$FFE2   //Display ' ' and delay
+$5E7C: JSR      P:$5FCF
 $5E7E: MOVE     Y0,X0
-$5E7F: 5 
-$5E80: data 005FC1
-$5E81: 5 
-$5E82: data 005FCF
+$5E7F: JSR      P:$5FC1             //Display '5' and delay
+$5E81: JSR      P:$5FCF
 $5E83: MOVE     #00,N0
 $5E84: MOVE     #005FEF,R0
-$5E86: 5 
-$5E87: data 005FC6
-$5E88: 5 
-$5E89: data 005FCF
-$5E8A: 5 
-$5E8B: data 005FCF
-$5E8C: JMP      P:$5E62
-$5E8E: 5 
-$5E8F: data 005F9D
+$5E86: JSR      P:$5FC6             //Display ' ' and delay
+$5E88: JSR      P:$5FCF
+$5E8A: JSR      P:$5FCF             //Delay again
+$5E8C: JMP      P:$5E62             //Infinite loop
+
+$5E8E: JSR      P:$5F9D
 $5E90: MOVE     #06,N0
 $5E91: NOP
 $5E92: MOVE     (R0)+N0
-$5E93: 5 
-$5E94: data 005F6B
+$5E93: JSR      P:$5F6B
 $5E95: MOVE     #000001,A
 $5E97: CMP      X0,A    #02,A1
 $5E98: 6 
@@ -122,33 +111,24 @@ $5EA9: CMP      X0,A
 $5EAA: 6 
 $5EAB: data 005F32
 $5EAC: JMP      P:$5E93
-$5EAE: 5 
-$5EAF: data 005F96
+$5EAE: JSR      P:$5F96
 $5EB0: DO       #003,$5EB3
-$5EB2: 5 
-$5EB3: data 005F64
+$5EB2: JSR      P:$5F64
 $5EB4: DO       #002,$5EB7
-$5EB6: 5 
-$5EB7: data 005F96
-$5EB8: 5 
-$5EB9: data 005F64
+$5EB6: JSR      P:$5F96
+$5EB8: JSR      P:$5F64
 $5EBA: 6 
 $5EBB: data 005E93
 $5EBC: DO       A1,$5EBF
-$5EBE: 5 
-$5EBF: data 005F6B
+$5EBE: JSR      P:$5F6B
 $5EC0: JMP      P:$5E93
-$5EC2: 5 
-$5EC3: data 005F6B
+$5EC2: JSR      P:$5F6B
 $5EC4: MOVE     X0,Y1
-$5EC5: 5 
-$5EC6: data 005F6B
+$5EC5: JSR      P:$5F6B
 $5EC7: MOVE     X0,Y0
-$5EC8: 5 
-$5EC9: data 005F64
+$5EC8: JSR      P:$5F64
 $5ECA: MOVE     A1,R1
-$5ECB: 5 
-$5ECC: data 005F64
+$5ECB: JSR      P:$5F64
 $5ECD: MOVE     A,X1
 $5ECE: MOVE     #03,A1
 $5ECF: CMP      Y1,A    #2AAAAB,X0
@@ -166,36 +146,28 @@ $5EDB: 6
 $5EDC: data 005EED
 $5EDD: JMP      P:$5EF4
 $5EDF: DO       B1,$5EE3
-$5EE1: 5 
-$5EE2: data 005F5A
+$5EE1: JSR      P:$5F5A
 $5EE3: MOVE     A1,X:(R1)+
 $5EE4: JMP      P:$5E93
 $5EE6: DO       B1,$5EEA
-$5EE8: 5 
-$5EE9: data 005F5A
+$5EE8: JSR      P:$5F5A
 $5EEA: MOVE     A1,Y:(R1)+
 $5EEB: JMP      P:$5E93
 $5EED: DO       B1,$5EF1
-$5EEF: 5 
-$5EF0: data 005F5A
+$5EEF: JSR      P:$5F5A
 $5EF1: MOVEM    A1,P:(R1)+
 $5EF2: JMP      P:$5E93
 $5EF4: DO       X1,$5EF7
-$5EF6: 5 
-$5EF7: data 005F6B
+$5EF6: JSR      P:$5F6B
 $5EF8: JMP      P:$5E93
-$5EFA: 5 
-$5EFB: data 005F6B
+$5EFA: JSR      P:$5F6B
 $5EFC: MOVE     X0,Y1
 $5EFD: MOVEM    P:$5FD7,R1
-$5EFF: 5 
-$5F00: data 005F6B
+$5EFF: JSR      P:$5F6B
 $5F01: MOVEM    X0,P:-(R1)
-$5F02: 5 
-$5F03: data 005F64
+$5F02: JSR      P:$5F64
 $5F04: MOVEM    A1,P:-(R1)
-$5F05: 5 
-$5F06: data 005F64
+$5F05: JSR      P:$5F64
 $5F07: MOVEM    A1,P:-(R1)
 $5F08: MOVE     #03,A1
 $5F09: CMP      Y1,A    #01,A1
@@ -205,15 +177,12 @@ $5F0C: CMP      Y1,A
 $5F0D: 6 
 $5F0E: data 005F15
 $5F0F: DO       Y1,$5F12
-$5F11: 5 
-$5F12: data 005F6B
+$5F11: JSR      P:$5F6B
 $5F13: JMP      P:$5E93
-$5F15: 5 
-$5F16: data 005F7C
+$5F15: JSR      P:$5F7C
 $5F17: MOVE     X0,A1
 $5F18: JMP      P:$5F1C
-$5F1A: 5 
-$5F1B: data 005F5A
+$5F1A: JSR      P:$5F5A
 $5F1C: MOVE     #000001,X0
 $5F1E: MOVEM    A1,P:-(R1)
 $5F1F: MOVEM    R1,P:$5FD7
@@ -221,16 +190,12 @@ $5F21: MOVEM    P:$5FD8,A
 $5F23: ADD      X0,A 
 $5F24: MOVEM    A1,P:$5FD8
 $5F26: JMP      P:$5E93
-$5F28: 5 
-$5F29: data 005F6B
+$5F28: JSR      P:$5F6B
 $5F2A: JMP      P:$5E93
-$5F2C: 5 
-$5F2D: data 005F64
-$5F2E: 5 
-$5F2F: data 005F6B
+$5F2C: JSR      P:$5F64
+$5F2E: JSR      P:$5F6B
 $5F30: JMP      P:$5E93
-$5F32: 5 
-$5F33: data 005F64
+$5F32: JSR      P:$5F64
 $5F34: CLR      A       A1,R4
 $5F35: MOVEM    P:$5FD8,Y0
 $5F37: CMP      Y0,A    #005E93,R1
@@ -262,39 +227,31 @@ $5F56: REP      X1
 $5F57: MOVEM    X0,P:(R2)+
 $5F58: NOP
 $5F59: JMP      P:(R4)
-$5F5A: 5 
-$5F5B: data 005F7C
+$5F5A: JSR      P:$5F7C
 $5F5C: MOVE     X0,A
-$5F5D: 5 
-$5F5E: data 005F72
+$5F5D: JSR      P:$5F72
 $5F5F: ADD      X0,A 
-$5F60: 5 
-$5F61: data 005F6B
+$5F60: JSR      P:$5F6B
 $5F62: ADD      X0,A 
 $5F63: RTS
-$5F64: 5 
-$5F65: data 005F72
+$5F64: JSR      P:$5F72
 $5F66: MOVE     X0,A
-$5F67: 5 
-$5F68: data 005F6B
+$5F67: JSR      P:$5F6B
 $5F69: ADD      X0,A 
 $5F6A: RTS
-$5F6B: 5 
-$5F6C: data 005F85
+$5F6B: JSR      P:$5F85
 $5F6D: MOVE     Y:(R0)+,X0
 $5F6E: MOVE     #FF,B1
 $5F6F: AND      X0,B 
 $5F70: MOVE     B1,X0
 $5F71: RTS
-$5F72: 5 
-$5F73: data 005F85
+$5F72: JSR      P:$5F85
 $5F74: MOVE     Y:(R0)+,X0
 $5F75: MOVE     #000080,X1
 $5F77: MPY      +X1,X0,B        #00FF00,X0
 $5F79: MOVE     B0,B
 $5F7A: JMP      P:$5F6F
-$5F7C: 5 
-$5F7D: data 005F85
+$5F7C: JSR      P:$5F85
 $5F7E: MOVE     Y:(R0)+,X0
 $5F7F: MOVE     #008000,X1
 $5F81: MPY      +X1,X0,B        #FF,X0
@@ -307,18 +264,18 @@ $5F89: 6
 $5F8A: data 005F95
 $5F8B: MOVEM    A1,P:$5FDA
 $5F8D: MOVEM    Y0,P:$5FDB
-$5F8F: 5 
-$5F90: data 005FB2
+$5F8F: JSR      P:$5FB2
 $5F91: MOVEM    P:$5FDA,A
 $5F93: MOVEM    P:$5FDB,Y0
 $5F95: RTS
 $5F96: CLR      A 
-$5F97: 5 
-$5F98: data 005F6B
+$5F97: JSR      P:$5F6B
 $5F99: CMP      X0,A 
 $5F9A: 6 
 $5F9B: data 005F97
 $5F9C: RTS
+
+//Subroutine @ $5F9D
 $5F9D: MOVEM    X0,P:$5FD9
 $5F9F: MOVE     #000300,A
 $5FA1: MOVE     #FFFFFC,X1
@@ -332,6 +289,7 @@ $5FAD: MOVE     #006000,A0
 $5FAF: MAC      +X1,X0,A 
 $5FB0: MOVE     A0,R0
 $5FB1: RTS
+
 $5FB2: MOVEM    P:$5FD9,X0
 $5FB4: MOVE     #003900,R0
 $5FB6: MOVE     X0,N0
@@ -345,9 +303,13 @@ $5FBD: CMP      X0,A
 $5FBE: 6 
 $5FBF: data 005F9D
 $5FC0: RTS
+
+//7 Segment Display 0-F Subroutine @ $5FC1
 $5FC1: MOVE     #00000F,A
 $5FC3: AND      X0,A    #005FDC,R0
 $5FC5: MOVE     A,N0
+
+//7 Segment Display Subroutine @ $5FC6
 $5FC6: MOVE     #0001FF,X0
 $5FC8: MOVE     X:$01,A
 $5FC9: AND      X0,A 
@@ -356,49 +318,59 @@ $5FCB: ADD      X0,A
 $5FCC: MOVE     A1,X:$01
 $5FCD: MOVEP    A1,Y:<<$FFE2
 $5FCE: RTS
-$5FCF: MOVE     #003FFF,X1
-$5FD1: DO       #12C,$5FD5
+
+//Delay Subroutine @ 5FCF
+//Delays approximately 300ms and toggles AHA4011 RSTN pin 300 times
+$5FCF: MOVE     #003FFF,X1          //16383
+$5FD1: DO       #12C,$5FD5          //Loop runs 300 times
 $5FD3: REP      X1
 $5FD4: NOP
 $5FD5: BCHG     #3,X:<<$FFE4
 $5FD6: RTS
+
+//Unknown data
 $5FD7: data 005E93
-$5FD8: NOP
-$5FD9: NOP
-$5FDA: NOP
-$5FDB: NOP
-$5FDC: data 00FC00
-$5FDD: data 006000
-$5FDE: data 00DA00
-$5FDF: data 00F200
-$5FE0: data 006600
-$5FE1: data 00B600
-$5FE2: data 00BE00
-$5FE3: data 00E000
-$5FE4: data 00FE00
-$5FE5: data 00F600
-$5FE6: data 00EE00
-$5FE7: data 003E00
-$5FE8: data 009C00
-$5FE9: data 007A00
-$5FEA: data 009E00
-$5FEB: data 008E00
-$5FEC: data 006E00
-$5FED: data 001C00
-$5FEE: data 00CE00
-$5FEF: NOP
-$5FF0: data 005E1B
-$5FF1: data 005E1B
-$5FF2: data 005E52
-$5FF3: data 005E5F
+$5FD8: data 000000
+$5FD9: data 000000
+$5FDA: data 000000
+$5FDB: data 000000
+
+//7 segment display values
+//Can display 0-F, and H-E-L-P
+$5FDC: data 00FC00 //0
+$5FDD: data 006000 //1
+$5FDE: data 00DA00 //2
+$5FDF: data 00F200 //3
+$5FE0: data 006600 //4
+$5FE1: data 00B600 //5
+$5FE2: data 00BE00 //6
+$5FE3: data 00E000 //7
+$5FE4: data 00FE00 //8
+$5FE5: data 00F600 //9
+$5FE6: data 00EE00 //A
+$5FE7: data 003E00 //b
+$5FE8: data 009C00 //C
+$5FE9: data 007A00 //d
+$5FEA: data 009E00 //E
+$5FEB: data 008E00 //F
+$5FEC: data 006E00 //H
+$5FED: data 001C00 //L
+$5FEE: data 00CE00 //P
+$5FEF: data 000000
+
+//Second stage loader jump table @ $5FF0
+$5FF0: data 005E1B                  //Mode 0 - Normal Operation
+$5FF1: data 005E1B                  //Mode 1 - Disable Link and Fault
+$5FF2: data 005E52                  //Mode 2 - Force Baseline System Load
+$5FF3: data 005E5F                  //Mode 3-7 Reserved
 $5FF4: data 005E5F
 $5FF5: data 005E5F
 $5FF6: data 005E5F
 $5FF7: data 005E5F
-$5FF8: data 005E31
-$5FF9: data 005E2D
-$5FFA: data 005E5F
-$5FFB: data 005E5F
+$5FF8: data 005E31                  //Mode 8 - Serial Port Flash ROM Load
+$5FF9: data 005E2D                  //Mode 9 - Factory Test
+$5FFA: data 005E5F                  //Mode A - Factory Test of Freq Synth
+$5FFB: data 005E5F                  //Mode B-F Reserved
 $5FFC: data 005E5F
 $5FFD: data 005E5F
 $5FFE: data 005E5F

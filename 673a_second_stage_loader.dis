@@ -1,3 +1,7 @@
+/*
+ * Dolby DA-20 Cat No. 673A Second Stage Loader software module version 1
+ */
+
 $5E0E: JSCC     $1F1
 $5E0F: MOVEP    Y:<<$FFE2,X0
 $5E10: MOVE     #000800,X1
@@ -16,13 +20,14 @@ $5E1E: DO       #003,$5E2A
 $5E20: MOVE     X:(R1)+,X1
 $5E21: CLR      A       X:(R1)+N1,X0
 $5E22: CMP      X0,A 
-$5E23: 6 
-$5E24: data 005E27
+$5E23: JEQ      P:$5E27
 $5E25: JCLR     #23,X1,$5E2A
 $5E27: ENDDO
 $5E28: JMP      P:$5E52
 $5E2A: NOP
-$5E2B: JMP      P:$5E8E
+$5E2B: JMP      P:$5E8E             //This jump is taken during normal execution
+
+//Start of execution for mode 9 - Factory Test
 $5E2D: MOVE     #00EB00,Y0
 $5E2F: JMP      P:$5E33
 $5E31: MOVE     #00EC00,Y0
@@ -33,25 +38,22 @@ $5E38: DO       Y:$00,$5E4D
 $5E3A: TFR      Y1,B    X:(R1)+,X1
 $5E3B: AND      X1,B    X:(R1)+N1,A
 $5E3C: CMP      Y0,B 
-$5E3D: 6 
-$5E3E: data 005E4D
+$5E3D: JNE      P:$5E4D
 $5E3F: ENDDO
 $5E40: TST      A       A1,X0
-$5E41: 6 
-$5E42: data 005E47
+$5E41: JNE      P:$5E47
 $5E43: MOVE     #000002,Y0
-$5E45: JMP      P:$5E61
+$5E45: JMP      P:$5E61             //Display H-E-L-P-2 repeatedly, this indicates "Selected Module not found in ROM" according to DA-20 manual
 $5E47: JCLR     #23,X1,$5E8E
 $5E49: MOVE     #000003,Y0
-$5E4B: JMP      P:$5E61
+$5E4B: JMP      P:$5E61             //Display H-E-L-P-3 repeatedly, this indicates "Selected Module failes checksum" according to DA-20 manual
 $5E4D: NOP
 $5E4E: MOVE     #000004,Y0
-$5E50: JMP      P:$5E61
+$5E50: JMP      P:$5E61             //Display H-E-L-P-4 repeatedly, this indicates "Selected Module not in directory" according to DA-20 manual
 $5E52: BSET     #2,X:$00
 $5E53: CLR      A       X:$3D10,X0
 $5E55: CMP      X0,A    X:$3D0F,X1
-$5E57: 6 
-$5E58: data 005E5D
+$5E57: JNE      P:$5E5D
 $5E59: MOVE     #000001,Y0
 $5E5B: JMP      P:$5E61             //Display H-E-L-P-1 repeatedly, this indicates "Missing Baseline FRED module" according to DA-20 manual
 $5E5D: JCLR     #23,X1,$5E8E        
@@ -83,6 +85,7 @@ $5E88: JSR      P:$5FCF
 $5E8A: JSR      P:$5FCF             //Delay again
 $5E8C: JMP      P:$5E62             //Infinite loop
 
+//Normal operation execution continues
 $5E8E: JSR      P:$5F9D
 $5E90: MOVE     #06,N0
 $5E91: NOP
@@ -90,26 +93,19 @@ $5E92: MOVE     (R0)+N0
 $5E93: JSR      P:$5F6B
 $5E95: MOVE     #000001,A
 $5E97: CMP      X0,A    #02,A1
-$5E98: 6 
-$5E99: data 005EAE
+$5E98: JEQ      P:$5EAE
 $5E9A: CMP      X0,A    #03,A1
-$5E9B: 6 
-$5E9C: data 005EC2
+$5E9B: JEQ      P:$5EC2
 $5E9D: CMP      X0,A    #06,A1
-$5E9E: 6 
-$5E9F: 68 
+$5E9E: JEQ      P:$5EFA
 $5EA0: CMP      X0,A    #05,A1
-$5EA1: 6 
-$5EA2: data 005F28
+$5EA1: JEQ      P:$5F28
 $5EA3: CMP      X0,A    #09,A1
-$5EA4: 6 
-$5EA5: 69 
+$5EA4: JEQ      P:$5EB8
 $5EA6: CMP      X0,A    #07,A1
-$5EA7: 6 
-$5EA8: data 005F2C
+$5EA7: JEQ      P:$5F2C
 $5EA9: CMP      X0,A 
-$5EAA: 6 
-$5EAB: data 005F32
+$5EAA: JEQ      P:$5F32
 $5EAC: JMP      P:$5E93
 $5EAE: JSR      P:$5F96
 $5EB0: DO       #003,$5EB3
@@ -117,8 +113,7 @@ $5EB2: JSR      P:$5F64
 $5EB4: DO       #002,$5EB7
 $5EB6: JSR      P:$5F96
 $5EB8: JSR      P:$5F64
-$5EBA: 6 
-$5EBB: data 005E93
+$5EBA: JEQ      P:$5E93
 $5EBC: DO       A1,$5EBF
 $5EBE: JSR      P:$5F6B
 $5EC0: JMP      P:$5E93
@@ -132,18 +127,14 @@ $5ECB: JSR      P:$5F64
 $5ECD: MOVE     A,X1
 $5ECE: MOVE     #03,A1
 $5ECF: CMP      Y1,A    #2AAAAB,X0
-$5ED1: 6 
-$5ED2: data 005EF4
-$5ED3: 83       #58,A1
+$5ED1: JNE      P:$5EF4
+$5ED3: MPYR     X1,X0,B #58,A1
 $5ED4: CMP      Y0,A    #59,A1
-$5ED5: 6 
-$5ED6: data 005EDF
+$5ED5: JEQ      P:$5EDF
 $5ED7: CMP      Y0,A    #50,A1
-$5ED8: 6 
-$5ED9: data 005EE6
+$5ED8: JEQ      P:$5EE6
 $5EDA: CMP      Y0,A 
-$5EDB: 6 
-$5EDC: data 005EED
+$5EDB: JEQ      P:$5EED
 $5EDD: JMP      P:$5EF4
 $5EDF: DO       B1,$5EE3
 $5EE1: JSR      P:$5F5A
@@ -171,11 +162,9 @@ $5F05: JSR      P:$5F64
 $5F07: MOVEM    A1,P:-(R1)
 $5F08: MOVE     #03,A1
 $5F09: CMP      Y1,A    #01,A1
-$5F0A: 6 
-$5F0B: data 005F1A
+$5F0A: JEQ      P:$5F1A
 $5F0C: CMP      Y1,A 
-$5F0D: 6 
-$5F0E: data 005F15
+$5F0D: JEQ      P:$5F15
 $5F0F: DO       Y1,$5F12
 $5F11: JSR      P:$5F6B
 $5F13: JMP      P:$5E93
@@ -199,8 +188,8 @@ $5F32: JSR      P:$5F64
 $5F34: CLR      A       A1,R4
 $5F35: MOVEM    P:$5FD8,Y0
 $5F37: CMP      Y0,A    #005E93,R1
-$5F39: 6 
-$5F3A: data 005F59
+$5F39: JEQ      P:$5F59
+
 $5F3B: DO       Y0,$5F58
 $5F3D: MOVEM    P:-(R1),Y1
 $5F3E: MOVEM    P:-(R1),R2
@@ -208,14 +197,11 @@ $5F3F: MOVEM    P:-(R1),X1
 $5F40: MOVEM    P:-(R1),X0
 $5F41: MOVE     #000058,A
 $5F43: CMP      Y1,A    #59,A1
-$5F44: 6 
-$5F45: data 005F4E
+$5F44: JEQ      P:$5F4E
 $5F46: CMP      Y1,A    #50,A1
-$5F47: 6 
-$5F48: data 005F52
+$5F47: JEQ      P:$5F52
 $5F49: CMP      Y1,A 
-$5F4A: 6 
-$5F4B: data 005F56
+$5F4A: JEQ      P:$5F56
 $5F4C: JMP      P:$5F58
 $5F4E: REP      X1
 $5F4F: MOVE     X0,X:(R2)+
@@ -226,6 +212,7 @@ $5F54: JMP      P:$5F58
 $5F56: REP      X1
 $5F57: MOVEM    X0,P:(R2)+
 $5F58: NOP
+
 $5F59: JMP      P:(R4)
 $5F5A: JSR      P:$5F7C
 $5F5C: MOVE     X0,A
@@ -260,8 +247,7 @@ $5F83: JMP      P:$5F6F
 $5F85: MOVE     R0,X0
 $5F86: MOVE     #00007F,B
 $5F88: AND      X0,B 
-$5F89: 6 
-$5F8A: data 005F95
+$5F89: JNE      P:$5F95
 $5F8B: MOVEM    A1,P:$5FDA
 $5F8D: MOVEM    Y0,P:$5FDB
 $5F8F: JSR      P:$5FB2
@@ -271,8 +257,7 @@ $5F95: RTS
 $5F96: CLR      A 
 $5F97: JSR      P:$5F6B
 $5F99: CMP      X0,A 
-$5F9A: 6 
-$5F9B: data 005F97
+$5F9A: JNE      P:$5F97
 $5F9C: RTS
 
 //Subroutine @ $5F9D
@@ -297,11 +282,9 @@ $5FB7: NOP
 $5FB8: CLR      A       X:(R0+N0),X0
 $5FB9: BCLR     #23,X0
 $5FBA: CMP      X0,A    #01,A1
-$5FBB: 6 
-$5FBC: data 005FC0
+$5FBB: JEQ      P:$5FC0
 $5FBD: CMP      X0,A 
-$5FBE: 6 
-$5FBF: data 005F9D
+$5FBE: JNE      P:$5F9D
 $5FC0: RTS
 
 //7 Segment Display 0-F Subroutine @ $5FC1

@@ -2,7 +2,6 @@
  * Dolby DA-20 Cat No. 673A Second Stage Loader software module version 1
  */
 
-$5E0E: JSCC     $1F1
 $5E0F: MOVEP    Y:<<$FFE2,X0
 $5E10: MOVE     #000800,X1
 $5E12: MPY      X1,X0,A #00000F,X0
@@ -86,20 +85,20 @@ $5E8A: JSR      P:$5FCF             //Delay again
 $5E8C: JMP      P:$5E62             //Infinite loop
 
 //Normal operation execution continues
-$5E8E: JSR      P:$5F9D
+$5E8E: JSR      P:$5F9D             //Call ROM page select subroutine
 $5E90: MOVE     #06,N0
 $5E91: NOP
 $5E92: MOVE     (R0)+N0
 $5E93: JSR      P:$5F6B
 $5E95: MOVE     #000001,A
 $5E97: CMP      X0,A    #02,A1
-$5E98: JEQ      P:$5EAE
+$5E98: JEQ      P:$5EAE             //This is taken second - since CC08 in ROM is 0x01
 $5E9A: CMP      X0,A    #03,A1
 $5E9B: JEQ      P:$5EC2
 $5E9D: CMP      X0,A    #06,A1
 $5E9E: JEQ      P:$5EFA
 $5EA0: CMP      X0,A    #05,A1
-$5EA1: JEQ      P:$5F28
+$5EA1: JEQ      P:$5F28             //This is taken - makes sense since CC06 in ROM is 0x06
 $5EA3: CMP      X0,A    #09,A1
 $5EA4: JEQ      P:$5EB8
 $5EA6: CMP      X0,A    #07,A1
@@ -129,11 +128,11 @@ $5ECE: MOVE     #03,A1
 $5ECF: CMP      Y1,A    #2AAAAB,X0
 $5ED1: JNE      P:$5EF4
 $5ED3: MPYR     X1,X0,B #58,A1
-$5ED4: CMP      Y0,A    #59,A1
+$5ED4: CMP      Y0,A    #59,A1      //If Y0 = 0x58 ('X') - load into X memory space      
 $5ED5: JEQ      P:$5EDF
-$5ED7: CMP      Y0,A    #50,A1
+$5ED7: CMP      Y0,A    #50,A1      //If Y0 = 0x59 ('Y') - load into Y memory space
 $5ED8: JEQ      P:$5EE6
-$5EDA: CMP      Y0,A 
+$5EDA: CMP      Y0,A                //If Y0 = 0x50 ('P') - load into P memory space
 $5EDB: JEQ      P:$5EED
 $5EDD: JMP      P:$5EF4
 $5EDF: DO       B1,$5EE3
@@ -214,6 +213,7 @@ $5F57: MOVEM    X0,P:(R2)+
 $5F58: NOP
 
 $5F59: JMP      P:(R4)
+
 $5F5A: JSR      P:$5F7C
 $5F5C: MOVE     X0,A
 $5F5D: JSR      P:$5F72
@@ -226,12 +226,14 @@ $5F66: MOVE     X0,A
 $5F67: JSR      P:$5F6B
 $5F69: ADD      X0,A 
 $5F6A: RTS
-$5F6B: JSR      P:$5F85
+
+$5F6B: JSR      P:$5F85             //Not sure what this subroutine does, does nothing however if lower 7 bits of R0 are set
 $5F6D: MOVE     Y:(R0)+,X0
 $5F6E: MOVE     #FF,B1
 $5F6F: AND      X0,B 
-$5F70: MOVE     B1,X0
+$5F70: MOVE     B1,X0               //X0 contains least significant byte from Y:$(R0)
 $5F71: RTS
+
 $5F72: JSR      P:$5F85
 $5F74: MOVE     Y:(R0)+,X0
 $5F75: MOVE     #000080,X1
@@ -244,30 +246,32 @@ $5F7F: MOVE     #008000,X1
 $5F81: MPY      +X1,X0,B        #FF,X0
 $5F82: MOVE     B0,B
 $5F83: JMP      P:$5F6F
-$5F85: MOVE     R0,X0
+
+$5F85: MOVE     R0,X0               //Move address register to X0
 $5F86: MOVE     #00007F,B
-$5F88: AND      X0,B 
-$5F89: JNE      P:$5F95
-$5F8B: MOVEM    A1,P:$5FDA
-$5F8D: MOVEM    Y0,P:$5FDB
-$5F8F: JSR      P:$5FB2
-$5F91: MOVEM    P:$5FDA,A
+$5F88: AND      X0,B                
+$5F89: JNE      P:$5F95             //Return from subroutine if lower 7 bits of address register are set
+$5F8B: MOVEM    A1,P:$5FDA          //Move A1 into placeholder memory
+$5F8D: MOVEM    Y0,P:$5FDB          //Move Y0 into placeholder memory
+$5F8F: JSR      P:$5FB2             //Call subroutine @ $5FB2
+$5F91: MOVEM    P:$5FDA,A           //Restore previous values of A1 and Y0 after returning from the subroutine
 $5F93: MOVEM    P:$5FDB,Y0
 $5F95: RTS
+
 $5F96: CLR      A 
 $5F97: JSR      P:$5F6B
 $5F99: CMP      X0,A 
 $5F9A: JNE      P:$5F97
 $5F9C: RTS
 
-//Subroutine @ $5F9D
-$5F9D: MOVEM    X0,P:$5FD9
+//ROM Page Selection Subroutine @ $5F9D
+$5F9D: MOVEM    X0,P:$5FD9          //Store X0 value in temp memory
 $5F9F: MOVE     #000300,A
 $5FA1: MOVE     #FFFFFC,X1
 $5FA3: AND      X0,A    X:$FFE4,B
 $5FA5: AND      X1,B    A,X1    #008000,Y0
 $5FA7: MAC      +X1,Y0,B        #0000FF,A
-$5FA9: MOVEP    B1,X:<<$FFE4
+$5FA9: MOVEP    B1,X:<<$FFE4        //Setting Port B GPIO pins 0 and 1 according to X0 - these pins control ROM and X memory address lines 15 and 16
 $5FAA: AND      X0,A    #000040,X1
 $5FAC: MOVE     A1,X0
 $5FAD: MOVE     #006000,A0
@@ -275,16 +279,17 @@ $5FAF: MAC      +X1,X0,A
 $5FB0: MOVE     A0,R0
 $5FB1: RTS
 
-$5FB2: MOVEM    P:$5FD9,X0
-$5FB4: MOVE     #003900,R0
-$5FB6: MOVE     X0,N0
+//Subroutine @ $5FB2 - calls page selection subroutine if value at X:(3900 + X0) is greater than 1
+$5FB2: MOVEM    P:$5FD9,X0          //Restore X0 from temp memory - this will be set to the value of X0 from the last time page select subroutine was called
+$5FB4: MOVE     #003900,R0          
+$5FB6: MOVE     X0,N0               //Using X0 as an address offset
 $5FB7: NOP
 $5FB8: CLR      A       X:(R0+N0),X0
 $5FB9: BCLR     #23,X0
 $5FBA: CMP      X0,A    #01,A1
-$5FBB: JEQ      P:$5FC0
+$5FBB: JEQ      P:$5FC0             //Return from subroutine if X0 is 0
 $5FBD: CMP      X0,A 
-$5FBE: JNE      P:$5F9D
+$5FBE: JNE      P:$5F9D             //Call page select subroutine if X0 is not 1
 $5FC0: RTS
 
 //7 Segment Display 0-F Subroutine @ $5FC1
@@ -311,11 +316,11 @@ $5FD4: NOP
 $5FD5: BCHG     #3,X:<<$FFE4
 $5FD6: RTS
 
-//Unknown data
-$5FD7: data 005E93
-$5FD8: data 000000
-$5FD9: data 000000
-$5FDA: data 000000
+//Temp memory for register values
+$5FD7: data 005E93                  //Temp memory for value of R1
+$5FD8: data 000000                  
+$5FD9: data 000000                  //Temp memory for value of X0
+$5FDA: data 000000                  
 $5FDB: data 000000
 
 //7 segment display values

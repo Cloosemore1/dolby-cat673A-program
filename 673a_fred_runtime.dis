@@ -1,0 +1,311 @@
+/*
+ * Dolby DA-20 Cat No. 673A FRED runtime software module version 11
+ */
+
+//Exception/Interrupt Vectors
+//This is where execution begins once the second stage loader completes
+$0000: JMP      P:$0CAD
+
+//Stack Error Interrupt Vector
+$0002: JMP      $65C
+$0003: NOP
+
+...
+
+//IRQA External Hardware Interrupt Vector
+$0008: JSR      $040
+$0009: NOP
+
+//IRQB External Hardware Interrupt Vector
+$000A: JSR      $4E6
+$000B: NOP
+
+//SSI Receive Data Interrupt Vector
+$000C: MOVEP    X:<<$FFEF,X:(R2)+
+$000D: NOP
+
+//SSI Receive Data w/ Exception Status Interrupt Vector
+$000E: MOVEP    X:<<$FFEE,X:(R2)
+$000F: MOVEP    X:<<$FFEF,X:(R2)+
+
+//SSI Transmit Data Interrupt Vector
+$0010: MOVEP    X:(R7)+,X:<<$FFEF
+$0011: NOP
+
+//SSI Transmit Data w/ Exception Status Interrupt Vector
+$0012: JSR      $130
+$0013: NOP
+
+//SCI Receive Data Interrupt Vector
+$0014: JSR      $5D8
+$0015: NOP
+
+//SCI Receive Data w/ Exception Status Interrupt Vector
+$0016: JSR      $5D5
+$0017: NOP
+
+//SCI Transmit Data Interrupt Vector
+$0018: JSR      $11A
+$0019: NOP
+
+...
+
+$001C: NOP
+$001D: NOP
+$001E: NOP
+$001F: NOP
+
+...
+
+//SCI Transmit Data Interrupt Handler @ $011A
+$011A: MOVE     A2,Y:-(R4)
+$011B: MOVE     A1,Y:-(R4)
+$011C: MOVE     A0,Y:-(R4)
+$011D: MOVE     X0,Y:-(R4)
+$011E: MOVE     R0,Y:-(R4)
+$011F: MOVEC    M0,Y:-(R4)
+$0120: MOVE     X:$3C,A
+$0121: MOVE     X:$3D,X0
+$0122: MOVEC    X:$3E,M0
+$0123: CMP      X0,A    X0,R0
+$0124: JEQ      $127
+$0125: MOVEP    X:(R0)+,X:<<$FFF4
+$0126: JMP      $128
+$0127: BCLR     #12,X:<<$FFF0
+$0128: MOVE     R0,X:$3D
+$0129: MOVEC    Y:(R4)+,M0
+$012A: MOVE     Y:(R4)+,R0
+$012B: MOVE     Y:(R4)+,X0
+$012C: MOVE     Y:(R4)+,A0
+$012D: MOVE     Y:(R4)+,A1
+$012E: MOVE     Y:(R4)+,A2
+$012F: RTI                          //Return from interrupt
+
+//SSI Transmit Data w/ Exception Status Interrupt Handler @ $0130
+$0130: MOVE     Y0,Y:-(R4)
+$0131: MOVEP    X:<<$FFEE,Y0
+$0132: MOVE     Y:(R4)+,Y0
+$0133: MOVEP    X:(R7)+,X:<<$FFEF
+$0134: RTI                          //Return from interrupt
+
+//Start Address - P:$029C, Length - 1488 bytes/496 program words, ROM Start Address - $D10C
+$029C: MOVE     #1D,N0
+$029D: MOVEC    X:$3E,M0
+$029E: MOVE     X:$3C,R0
+$029F: MOVE     #00002B,X0
+$02A1: MOVE     X0,X:(R0)+
+$02A2: MOVE     #000037,X0
+$02A4: MOVE     X0,X:(R0)+
+$02A5: MOVE     #000069,X0
+$02A7: MOVE     X0,X:(R0)+
+$02A8: MOVE     #000038,X0
+$02AA: MOVE     X0,X:(R0)+N0
+$02AB: MOVEC    #00FFFF,M0
+$02AD: MOVE     R0,X:$3C
+$02AE: BSET     #12,X:<<$FFF0
+$02AF: RTS
+
+$02B0: CLR      A       Y:$00,X0
+$02B1: CMP      X0,A 
+$02B2: JEQ      P:$02D6
+$02B4: TFR      X0,A    X:$3C,R0
+$02B5: ASL      A
+$02B7: ADD      X0,A    #000080,X1
+$02B9: MOVEC    X:$3E,M0
+$02BA: MOVE     #003D00,R1
+$02BC: MOVE     #00002B,X0
+$02BE: MOVE     X0,X:(R0)+
+$02BF: MOVE     #000037,X0
+$02C1: MOVE     X0,X:(R0)+
+$02C2: MOVE     #000069,X0
+$02C4: MOVE     X0,X:(R0)+
+$02C5: MOVE     #000038,X0
+$02C7: MOVE     X0,X:(R0)+
+$02C8: MOVE     Y:$00,X0
+$02C9: MOVE     X0,X:(R0)+
+$02CA: MOVE     X:(R1)+,Y1
+$02CB: DO       A1,$02D1
+$02CD: MPY      +Y1,X1,A        Y1,X0
+$02CE: MPY      +Y1,Y0,A        A,X:(R0)+
+$02CF: MOVE     A,X:(R0)+
+$02D0: MOVE     X0,X:(R0)+
+$02D1: MOVE     X:(R1)+,Y1
+$02D2: MOVE     R0,X:$3C
+$02D3: BSET     #12,X:<<$FFF0
+$02D4: MOVEC    #00FFFF,M0
+$02D6: MOVE     #0002D9,R0
+$02D8: MOVE     R0,X:$3F
+$02D9: RTS
+
+$02DA: MOVE     X:$3C,R0
+$02DB: MOVEC    X:$3E,M0
+$02DC: MOVE     #00002B,X0
+$02DE: MOVE     X0,X:(R0)+
+$02DF: MOVE     #000037,X0
+$02E1: MOVE     X0,X:(R0)+
+$02E2: MOVE     #000069,X0
+$02E4: MOVE     X0,X:(R0)+
+$02E5: MOVE     #000038,X0
+$02E7: MOVE     X0,X:(R0)+
+$02E8: MOVE     #000014,X0
+$02EA: MOVE     X0,X:(R0)+
+$02EB: MOVEC    #00FFFF,M0
+$02ED: MOVE     R0,X:$3C
+$02EE: BSET     #12,X:<<$FFF0
+$02EF: MOVE     #0002D9,R0
+$02F1: MOVE     R0,X:$3F
+$02F2: RTS
+
+$02F3: MOVE     #1A,N0
+$02F4: MOVEC    X:$3E,M0
+$02F5: MOVE     X:$3C,R0
+$02F6: NOP
+$02F7: MOVE     (R0)+N0
+$02F8: MOVEC    #00FFFF,M0
+$02FA: MOVE     R0,X:$3C
+$02FB: BSET     #12,X:<<$FFF0
+$02FC: RTS
+
+$02FD: JSET     #23,X:$00,$0308
+$02FF: MOVE     #0A,N0
+$0300: MOVE     X:$3C,R0
+$0301: MOVEC    X:$3E,M0
+$0302: NOP
+$0303: MOVE     (R0)+N0
+$0304: MOVEC    #00FFFF,M0
+$0306: MOVE     R0,X:$3C
+$0307: BSET     #12,X:<<$FFF0
+$0308: RTS
+
+$0309: MOVE     X:$004F,A
+$030B: MOVE     #000001,X1
+$030D: SUB      X1,A    X:$004E,R1
+$030F: JMI      P:$0329
+$0311: MOVEC    #00FFFF,M1
+$0313: MOVEC    X:$3E,M0
+$0314: MOVE     X:$3C,R0
+$0315: MOVE     #008000,X1
+$0317: MOVE     #000080,Y1
+$0319: MOVE     X:(R1)+,X0
+$031A: MPY      +X1,X0,A        A,X:$004F
+$031C: MPY      +X0,Y1,A        A1,X:(R0)+
+$031D: DO       #007,$0321
+$031F: MOVE     X:(R1)+,X0
+$0320: MPY      +X1,X0,A        A1,X:(R0)+
+$0321: MPY      +X0,Y1,A        A1,X:(R0)+
+$0322: MOVE     A1,X:(R0)+
+$0323: MOVE     R0,X:$3C
+$0324: MOVE     R1,X:$004E
+$0326: MOVEC    #00FFFF,M0
+$0328: BSET     #12,X:<<$FFF0
+$0329: RTS
+
+$032A: MOVE     X0,N0
+$032B: MOVE     X0,Y0
+$032C: MOVE     #003900,R0
+$032E: CLR      A       #000001,X1
+$0330: MOVE     X:(R0+N0),A1
+$0331: BCLR     #23,A1
+$0332: MOVE     Y0,X:(R0+N0)
+$0333: CMP      Y0,A 
+$0334: JEQ      P:$033C
+$0336: CMP      X1,A    A1,Y0
+$0337: JEQ      P:$033C
+$0339: TST      A       Y0,N0
+$033A: JNE      P:$0330
+$033C: RTS
+
+//7 Segment Display subroutine @$0477
+$0477: MOVE     #00000F,A
+$0479: AND      X0,A    #000DCF,R0
+$047B: MOVE     A,N0
+$047C: MOVE     #0001FF,X0
+$047E: MOVE     X:$01,A
+$047F: AND      X0,A 
+$0480: MOVEM    P:(R0+N0),X0
+$0481: ADD      X0,A 
+$0482: MOVE     A1,X:$01
+$0483: MOVEP    A1,Y:<<$FFE2
+$0484: RTS
+
+$0485: MOVE     R2,A
+$0486: MOVE     R3,X0
+$0487: SUB      X0,A
+$0488: JEQ      P:$0485
+$048A: MOVE     X:(R3)+,A
+$048B: RTS
+
+$048C: MOVE     #000080,X1
+$048E: MPY      +X1,X0,A        #008000,X1
+$0490: MPY      +X1,X0,A        A1,X:(R0)+
+$0491: MOVE     A1,X:(R0)+
+$0492: MOVE     X0,X:(R0)+
+$0493: RTS
+
+$0494: MOVE     #003FFF,X1
+$0496: DO       #0C8,$049B
+$0498: DO       X1,$049A
+$049A: NOP
+$049B: BCHG     #3,X:<<$FFE4
+$049C: RTS
+
+$049D: JSET     #16,X:$00,$04C3
+$049F: MOVE     #000001,Y0
+$04A1: BCLR     #0,X:<<$FFE4
+$04A2: BCLR     #1,X:<<$FFE4
+$04A3: MOVE     #00000F,R0
+$04A5: MOVE     X:$FFFF,X0
+$04A7: MOVE     X0,Y:-(R4)
+$04A8: BCLR     #4,X:<<$FFFF
+$04A9: DO       #004,$04BF
+$04AB: MOVE     X:(R0)+,A
+$04AC: TST      A 
+$04AD: JNE      P:$04B2
+$04AF: ENDDO
+$04B0: JMP      P:$04C0
+$04B2: BCHG     #0,X:<<$FFE4
+$04B3: JCS      P:$04B6
+$04B5: BCHG     #1,X:<<$FFE4
+$04B6: SUB      Y0,A    X:(R0),R1
+$04B7: MOVEC    A1,M1               //Might be decoded incorrectly - double check instruction
+$04B8: MOVE     N5,R5
+$04B9: DO       #100,$04BE
+$04BB: MOVE     X:(R1),X0
+$04BC: MOVE     X:(R5),X1
+$04BD: MOVE     X0,X:(R5)+
+$04BE: MOVE     X1,X:(R1)+
+$04BF: MOVE     R1,X:(R0)+
+$04C0: MOVE     Y:(R4)+,X0
+$04C1: MOVE     X0,X:$FFFF
+$04C3: JCLR     #11,X:$00,$04DC
+$04C5: MOVE     R6,A
+$04C6: MOVE     R7,X0
+$04C7: SUB      X0,A    #001000,X0
+$04C9: JPL      P:$04CC
+$04CB: ADD      X0,A 
+$04CC: MOVE     X:$0040,X0
+$04CE: MOVE     #000003,X1
+$04D0: MPY      +X1,X0,B 
+$04D1: MOVE     B0,B
+$04D2: SUB      B,A 
+$04D3: MOVE     A,X:$07
+$04D4: JSET     #13,X:$00,$04E5
+$04D6: JSET     #12,X:$00,$04DA
+$04D8: JMP      P:$04DC
+$04DA: DO       #002,$04E4
+$04DC: MOVE     R6,R0
+$04DD: MOVE     #09,N0
+$04DE: MOVE     N5,R5
+$04DF: DO       #100,$04E2
+$04E1: MOVE     X:(R5)+,X0
+$04E2: MOVE     X0,X:(R6)+
+$04E3: MOVE     X:$26,X0
+$04E4: MOVE     X0,X:(R0+N0)
+$04E5: RTS
+
+//Start Address - P:$04E6, Length - 717 bytes/239 program words, ROM Start Address - $DA8D
+$04E6: MOVE     R0,Y:-(R4)
+$04E7: MOVE     X:$17,R0
+$04E8: NOP
+$04E9: JMP      P:(R0)
+

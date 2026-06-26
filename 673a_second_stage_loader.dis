@@ -92,13 +92,13 @@ $5E92: MOVE     (R0)+N0
 $5E93: JSR      P:$5F6B
 $5E95: MOVE     #000001,A
 $5E97: CMP      X0,A    #02,A1
-$5E98: JEQ      P:$5EAE             //This is taken second - since CC08 in ROM is 0x01
+$5E98: JEQ      P:$5EAE
 $5E9A: CMP      X0,A    #03,A1
-$5E9B: JEQ      P:$5EC2
+$5E9B: JEQ      P:$5EC2             //Load command
 $5E9D: CMP      X0,A    #06,A1
-$5E9E: JEQ      P:$5EFA
+$5E9E: JEQ      P:$5EFA             //Load command prefix 2
 $5EA0: CMP      X0,A    #05,A1
-$5EA1: JEQ      P:$5F28             //This is taken - makes sense since CC06 in ROM is 0x06
+$5EA1: JEQ      P:$5F28
 $5EA3: CMP      X0,A    #09,A1
 $5EA4: JEQ      P:$5EB8
 $5EA6: CMP      X0,A    #07,A1
@@ -214,6 +214,7 @@ $5F58: NOP
 
 $5F59: JMP      P:(R4)
 
+//Subroutine @ $5F5A builds a 24-bit word from 3 consecutive bytes in ROM
 $5F5A: JSR      P:$5F7C
 $5F5C: MOVE     X0,A
 $5F5D: JSR      P:$5F72
@@ -221,6 +222,7 @@ $5F5F: ADD      X0,A
 $5F60: JSR      P:$5F6B
 $5F62: ADD      X0,A 
 $5F63: RTS
+
 $5F64: JSR      P:$5F72
 $5F66: MOVE     X0,A
 $5F67: JSR      P:$5F6B
@@ -240,6 +242,7 @@ $5F75: MOVE     #000080,X1
 $5F77: MPY      +X1,X0,B        #00FF00,X0
 $5F79: MOVE     B0,B
 $5F7A: JMP      P:$5F6F
+
 $5F7C: JSR      P:$5F85
 $5F7E: MOVE     Y:(R0)+,X0
 $5F7F: MOVE     #008000,X1

@@ -253,7 +253,6 @@ $0134: RTI                          //Return from interrupt
 
 ...
 
-//Start Address - P:$029C, Length - 1488 bytes/496 program words, ROM Start Address - $D10C
 $029C: MOVE     #1D,N0
 $029D: MOVEC    X:$3E,M0
 $029E: MOVE     X:$3C,R0
@@ -269,7 +268,6 @@ $02AB: MOVEC    #00FFFF,M0
 $02AD: MOVE     R0,X:$3C
 $02AE: BSET     #12,X:<<$FFF0
 $02AF: RTS
-
 $02B0: CLR      A       Y:$00,X0
 $02B1: CMP      X0,A 
 $02B2: JEQ      P:$02D6
@@ -301,7 +299,6 @@ $02D4: MOVEC    #00FFFF,M0
 $02D6: MOVE     #0002D9,R0
 $02D8: MOVE     R0,X:$3F
 $02D9: RTS
-
 $02DA: MOVE     X:$3C,R0
 $02DB: MOVEC    X:$3E,M0
 $02DC: MOVE     #00002B,X0
@@ -320,7 +317,6 @@ $02EE: BSET     #12,X:<<$FFF0
 $02EF: MOVE     #0002D9,R0
 $02F1: MOVE     R0,X:$3F
 $02F2: RTS
-
 $02F3: MOVE     #1A,N0
 $02F4: MOVEC    X:$3E,M0
 $02F5: MOVE     X:$3C,R0
@@ -330,7 +326,6 @@ $02F8: MOVEC    #00FFFF,M0
 $02FA: MOVE     R0,X:$3C
 $02FB: BSET     #12,X:<<$FFF0
 $02FC: RTS
-
 $02FD: JSET     #23,X:$00,$0308
 $02FF: MOVE     #0A,N0
 $0300: MOVE     X:$3C,R0
@@ -341,7 +336,6 @@ $0304: MOVEC    #00FFFF,M0
 $0306: MOVE     R0,X:$3C
 $0307: BSET     #12,X:<<$FFF0
 $0308: RTS
-
 $0309: MOVE     X:$004F,A
 $030B: MOVE     #000001,X1
 $030D: SUB      X1,A    X:$004E,R1
@@ -364,7 +358,6 @@ $0324: MOVE     R1,X:$004E
 $0326: MOVEC    #00FFFF,M0
 $0328: BSET     #12,X:<<$FFF0
 $0329: RTS
-
 $032A: MOVE     X0,N0
 $032B: MOVE     X0,Y0
 $032C: MOVE     #003900,R0
@@ -379,6 +372,231 @@ $0337: JEQ      P:$033C
 $0339: TST      A       Y0,N0
 $033A: JNE      P:$0330
 $033C: RTS
+$033D: MOVE     X:$36,X0
+$033E: JSR      P:$017F
+$0340: MOVE     X:$3A,R5
+$0341: JSR      P:$03E0
+$0343: MOVE     X:(R5)+,A
+$0344: DO       #080,$0346
+$0346: MOVE     A,X:(R5)+       Y:(R0)+,A
+$0347: MOVE     #00034B,R5
+$0349: MOVE     R5,X:$34
+$034A: RTS
+$034B: MOVE     X:$36,X0
+$034C: JSR      P:$017F
+$034E: JSET     #6,Y:(R0),$0352
+$0350: JMP      P:$0356
+$0352: JSET     #6,Y:(R0),$0359
+$0354: JMP      P:$0358
+$0356: JCLR     #6,Y:(R0),$0359
+$0358: RTS
+$0359: CLR      A       X:$3A,R5
+$035A: MOVE     #0000FF,X1
+$035C: MOVE     X:(R5)+,A
+$035D: MOVE     Y:(R0)+,Y0
+$035E: DO       #080,$036D
+$0360: EOR      Y0,A 
+$0361: AND      X1,A 
+$0362: JEQ      P:$036D
+$0364: ENDDO
+$0365: MOVE     #00033D,R0
+$0367: MOVE     R0,X:$34
+$0368: BSET     #8,X:$01
+$0369: MOVE     X:$01,X1
+$036A: MOVEP    X1,Y:<<$FFE2
+$036B: JMP      P:$033D
+$036D: MOVE     X:(R5)+,A       Y:(R0)+,Y0
+$036E: MOVE     X:$35,R0
+$036F: NOP
+$0370: JMP      P:(R0)
+$0371: MOVE     #003900,N0
+$0373: MOVE     X0,R0
+$0374: NOP
+$0375: LUA      (R0)+N0,R1
+$0376: MOVE     (R0)+
+$0377: MOVE     R0,X0
+$0378: MOVE     X:(R0+N0),A
+$0379: CMP      X0,A    #0003FF,A
+$037B: JEQ      P:$0381
+$037D: CMP      X0,A 
+$037E: JNE      P:$0376
+$0380: RTS
+$0381: TST      A       X0,X:(R1)
+$0382: RTS
+$0383: MOVE     #0B,R0
+$0384: MOVE     #003900,N0
+$0386: MOVE     (R0)+
+$0387: MOVE     R0,X0
+$0388: MOVE     X:(R0+N0),A
+$0389: CMP      X0,A    #0003FF,A
+$038B: JEQ      P:$0391
+$038D: CMP      X0,A 
+$038E: JNE      P:$0386
+$0390: RTS
+$0391: TST      A 
+$0392: RTS
+$0393: MOVE     #00,N0
+$0394: MOVE     #000DE9,R0
+$0396: JSR      P:$047C
+$0398: MOVE     #003902,R1
+$039A: CLR      A 
+$039B: MOVE     X:(R1)+,X0
+$039C: DO       #3FE,$039E
+$039E: ADD      X0,A    X:(R1)+,X0
+$039F: BCLR     #23,A1
+$03A0: MOVE     #000FFF,Y0
+$03A2: MOVE     #000800,X1
+$03A4: AND      Y0,A    A1,X0
+$03A5: MPY      +X1,X0,A        A1,X:$3901
+$03A7: AND      Y0,A    #003D2D,R5
+$03A9: MOVE     A1,X:$3900
+$03AB: MOVE     #003900,R1
+$03AD: MOVE     #008000,Y0
+$03AF: MOVE     #000080,Y1
+$03B1: DO       #200,$03BB
+$03B3: MOVE     X:(R1)+,X0
+$03B4: MOVE     X:(R1)+,A0
+$03B5: BCLR     #23,A0
+$03B6: MAC      +X1,X0,A 
+$03B7: MOVE     A0,X0
+$03B8: MPY      +X0,Y1,A 
+$03B9: MPY      +Y0,X0,A        A1,X:(R5)+
+$03BA: MOVE     A1,X:(R5)+
+$03BB: MOVE     X0,X:(R5)+
+$03BC: MOVE     #003D2D,R5
+$03BE: CLR      A       R5,X:$3A
+$03BF: MOVE     A,X:$36
+$03C0: MOVE     #0003C7,R5
+$03C2: MOVE     R5,X:$35
+$03C3: MOVE     #00033D,R5
+$03C5: MOVE     R5,X:$34
+$03C6: JMP      P:(R5)
+$03C7: MOVE     #000001,A
+$03C9: ADD      X0,A    #00000C,X0
+$03CB: CMP      X0,A 
+$03CC: JEQ      P:$03D2
+$03CE: MOVE     (R5)-
+$03CF: MOVE     A,X:$36
+$03D0: MOVE     R5,X:$3A
+$03D1: RTS
+$03D2: MOVE     #006000,R0
+$03D4: BCLR     #11,X:<<$FFE4
+$03D5: JSET     #6,Y:(R0),$03D9
+$03D7: JMP      P:$03DB
+$03D9: JSET     #6,Y:(R0),$03DF
+$03DB: JCLR     #6,Y:(R0),$03DF
+$03DD: JMP      P:$03D9
+$03DF: JMP      $65C
+$03E0: MOVE     #0000AA,X1
+$03E2: MOVE     X1,Y:$D555
+$03E4: MOVE     #000055,X1
+$03E6: MOVE     X1,Y:$AAAA
+$03E8: MOVE     #0000A0,X1
+$03EA: MOVE     X1,Y:$D555
+$03EC: RTS
+$03ED: BCLR     #0,X:<<$FFE4
+$03EE: BCLR     #1,X:<<$FFE4
+$03EF: MOVE     #008000,Y0
+$03F1: MOVE     A1,A
+$03F2: MOVE     X:(R0)+,X0
+$03F3: TST      A       #000080,Y1
+$03F5: JNE      P:$03FB
+$03F7: MPY      +X0,Y1,A 
+$03F8: MPY      +Y0,X0,A        A,X:(R1)+
+$03F9: JMP      P:$0402
+$03FB: MPY      +X0,Y1,A        A1,X1
+$03FC: MPY      +Y0,X0,A        A,X:(R1)+
+$03FD: DO       X1,$0401
+$03FF: MOVE     X:(R0)+,X0
+$0400: MPY      +X0,Y1,A        A,X:(R1)+
+$0401: MPY      +Y0,X0,A        A,X:(R1)+
+$0402: MOVE     A,X:(R1)+
+$0403: RTS
+$0404: MOVE     X:$37,R0
+$0405: MOVE     #02,N0
+$0406: MOVE     Y:$00,X0
+$0407: TFR      X0,A    R0,X1
+$0408: ASL      A
+$0409: ADD      X0,A    #003D00,X0
+$040B: TFR      X1,A    A,X1
+$040C: SUB      X0,A 
+$040D: CMP      X1,A    #FF,A
+$040E: JGE      P:$0393
+$0410: MOVE     (R0)+N0
+$0411: NOP
+$0412: MOVE     X:(R0)+,X1
+$0413: AND      X1,A    R0,X:$37
+$0414: JEQ      P:$0406
+$0416: MOVE     (R0)-N0
+$0417: MOVE     X1,X:$39
+$0418: CLR      A       X:(R0),X0
+$0419: CMP      X0,A    R0,R1
+$041A: JEQ      P:$0420
+$041C: JSR      P:$032A
+$041E: JMP      P:$0422
+$0420: JSR      P:$0383
+$0422: MOVE     X:$39,R0
+$0423: MOVE     X0,X:(R1)
+$0424: MOVE     (R0)+
+$0425: MOVE     R0,X:$39
+$0426: BCLR     #0,X:<<$FFE4
+$0427: BCLR     #1,X:<<$FFE4
+$0428: MOVE     X:(R0),X1
+$0429: MOVE     #02,Y0
+$042A: MPY      +X1,Y0,A        X0,X:$36
+$042B: MOVE     #03FFFC,Y0
+$042D: AND      Y0,A    #000006,X1
+$042F: ADD      X1,A    X0,N0
+$0430: MOVE     A1,X:$3B
+$0431: MOVE     #03FF80,Y0
+$0433: AND      Y0,A    #003900,R0
+$0435: JEQ      P:$0459
+$0437: JMP      P:$0443
+$0439: MOVE     X:$36,X0
+$043A: JSR      P:$0371
+$043C: MOVE     X0,X:$36
+$043D: MOVE     X:$3B,A
+$043E: MOVE     #03FF80,Y0
+$0440: AND      Y0,A 
+$0441: JEQ      P:$0459
+$0443: MOVE     X:$39,R0
+$0444: MOVE     #001D01,R1
+$0446: MOVE     #3F,A1
+$0447: JSR      P:$03ED
+$0449: MOVE     R0,X:$39
+$044A: MOVE     X:$3B,A
+$044B: MOVE     #000080,Y0
+$044D: SUB      Y0,A 
+$044E: MOVE     A,X:$3B
+$044F: MOVE     #001D01,R0
+$0451: MOVE     R0,X:$3A
+$0452: MOVE     #000439,R0
+$0454: MOVE     R0,X:$35
+$0455: MOVE     #00033D,R0
+$0457: MOVE     R0,X:$34
+$0458: JMP      P:(R0)
+$0459: LUA      (R0)+N0,R1
+$045A: MOVE     X0,X:$36
+$045B: MOVE     R1,X:$38
+$045C: MOVE     X:$3B,A
+$045D: TFR      A,B     #001D01,R1
+$045F: ADC      X,A     X:$39,R0
+$0460: JCS      P:$0465
+$0462: MOVE     #000001,Y0
+$0464: SUB      Y0,A 
+$0465: JSR      P:$03ED
+$0467: MOVE     B1,X:$1D80
+$0469: MOVE     #000470,R0
+$046B: MOVE     R0,X:$35
+$046C: MOVE     #00033D,R0
+$046E: MOVE     R0,X:$34
+$046F: JMP      P:(R0)
+$0470: MOVE     X:$38,R0
+$0471: CLR      A 
+$0472: MOVE     A,X:(R0)
+$0473: MOVE     #000404,R0
+$0475: MOVE     R0,X:$34
+$0476: JMP      P:(R0)
 
 //7 Segment Display subroutine @$0477
 $0477: MOVE     #00000F,A
@@ -407,6 +625,7 @@ $0491: MOVE     A1,X:(R0)+
 $0492: MOVE     X0,X:(R0)+
 $0493: RTS
 
+//Delay Subroutine @ $0494
 $0494: MOVE     #003FFF,X1
 $0496: DO       #0C8,$049B
 $0498: DO       X1,$049A
@@ -508,6 +727,7 @@ $0513: MOVE     R0,X:$17
 $0514: BCLR     #12,X:<<$FFE2
 $0515: BCLR     #13,X:<<$FFE2
 $0516: RTS
+
 $0517: MOVE     X:$1D,R0
 $0518: MOVE     #000008,Y0
 $051A: MOVE     X:(R0)+,X0
@@ -522,6 +742,7 @@ $0524: RTS
 $0525: MOVE     #000505,R0
 $0527: MOVE     R0,X:$1B
 $0528: RTS
+
 $0529: MOVE     A2,Y:-(R4)
 $052A: MOVE     A1,Y:-(R4)
 $052B: MOVE     A0,Y:-(R4)
@@ -650,3 +871,43 @@ $05D2: MOVE     Y:(R4)+,A2
 $05D3: MOVE     Y:(R4)+,R0
 $05D4: RTI
 
+$05D5: MOVE     Y0,Y:-(R4)
+$05D6: MOVEP    X:<<$FFF1,Y0
+$05D7: MOVE     Y:(R4)+,Y0
+$05D8: MOVE     A2,Y:-(R4)
+$05D9: MOVE     A1,Y:-(R4)
+$05DA: MOVE     A0,Y:-(R4)
+$05DB: MOVE     R0,Y:-(R4)
+$05DC: MOVE     N0,Y:-(R4)
+$05DD: MOVE     X:$04,R0
+$05DE: MOVE     X0,Y:-(R4)
+$05DF: JMP      P:(R0)
+$05E0: MOVEP    X:<<$FFF4,X0
+$05E1: MOVE     #0000D4,A
+$05E3: CMP      X0,A    #0005E0,R0
+$05E5: JNE      P:$07E1
+$05E7: MOVE     #0005EB,R0
+$05E9: JMP      P:$07E1
+$05EB: MOVEP    X:<<$FFF4,X0
+$05EC: MOVE     #0000C8,A
+$05EE: CMP      X0,A    #0005E0,R0
+$05F0: JNE      P:$07E1
+$05F2: MOVE     #0005F6,R0
+$05F4: JMP      P:$07E1
+$05F6: MOVEP    X:<<$FFF4,X0
+$05F7: MOVE     #000096,A
+$05F9: CMP      X0,A    #0005E0,R0
+$05FB: JNE      P:$07E1
+$05FD: MOVE     #000601,R0
+$05FF: JMP      P:$07E1
+$0601: MOVEP    X:<<$FFF4,X0
+$0602: MOVE     #0000C7,A
+$0604: CMP      X0,A    #0005E0,R0
+$0606: JNE      P:$07E1
+$0608: MOVE     #00060C,R0
+$060A: JMP      P:$07E1
+$060C: MOVEP    X:<<$FFF6,X:$0005
+$060E: MOVE     #000612,R0
+$0610: JMP      P:$07E1
+$0612: MOVEP    X:<<$FFF5,X0
+$0613: MOVE     X:$05,A

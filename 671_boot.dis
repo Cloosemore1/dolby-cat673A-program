@@ -1,0 +1,26 @@
+/*
+ * Dolby DA-20 Cat No. 671 bootstrap program
+ */
+
+ //This bootstrap program loads the "second stage loader" from the onboard ROM
+ //Starts at address $4C00 in ROM and loads little endian to program RAM $7E76-$7FFD
+
+$0000: JMP      P:$0040
+
+...
+
+$0040: OR(I)    03,MR
+$0041: MOVEP    #00FFFF,X:<<$FFFE
+$0043: MOVE     #00CC00,R0
+$0045: MOVE     #007E76,R1
+$0047: MOVE     #007E76,R2
+$0049: MOVE     #000187,A1
+$004B: DO       A1,$0052
+$004D: DO       #003,$0051
+$004F: MOVEM    P:(R0)+,A2
+$0050: REP      008
+$0051: ASR      A
+$0052: MOVEM    A1,P:(R1)+
+$0053: NOP
+$0054: MOVEP    #000000,X:<<$FFFE
+$0056: JMP      P:(R2)

@@ -1,5 +1,5 @@
 /*
- * Dolby DA-20 Cat No. 673A Boot software module version 01
+ * Dolby DA-20 Cat No. 673A Boot software module version 0
  */
 
 $0000: JMP      $04F                //Program execution starts here

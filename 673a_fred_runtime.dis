@@ -253,6 +253,159 @@ $0134: RTI                          //Return from interrupt
 
 ...
 
+//Error Correction Input Block Subroutine @ $0132
+$0132: MOVE     #00,R5              //Erasure count starts at 0
+$0133: MOVE     X:(R0)+,N3
+$0134: DO       N1,$013C            //Loop executes N1 times, where N1 is the number of bytes in the ECC block
+$0136: MOVE     X:(R3+N3),B
+$0137: MOVE     X:(R0)+,N3
+$0138: JCLR     #15,B1,$013B        //Erasure indicator for current byte of data. Active high
+$013A: MOVE     (R5)+               //Increment erasure counter accordingly
+$013B: MOVE     B1,Y:$FFE0          //Input B1 to AHA4011B
+$013D: RTS
+
+//Error Correction Read Corrected Block Subroutine @ $013E
+$013E: CLR      A       #01,X0
+$013F: MOVE     A,Y1
+$0140: MOVE     #14,N0
+$0141: MOVE     #FF,X1
+$0142: JCLR     #8,X:<<$FFE4,$014B  //If current message block was correctable, jump to $014B
+$0144: DO       N1,$0148
+$0146: MOVE     (R0)+
+$0147: MOVE     Y:$FFE0,B
+$0149: BSET     #23,Y1
+$014A: JMP      $154
+$014B: DO       N1,$0153
+$014D: MOVE     X:(R0)+,N3
+$014E: MOVE     Y:$FFE0,B
+$0150: BCLR     #15,B1
+$0151: JCC      $153
+$0152: ADD      X0,A 
+$0153: MOVE     B1,X:(R3+N3)
+$0154: MOVE     R5,X0
+$0155: LUA      (R0)-N0,R5
+$0156: MOVE     #008000,X1
+$0158: MPY      +X1,X0,B        X:(R5)+,N3
+$0159: MOVE     B0,B
+$015A: OR       Y1,B
+$015B: MOVE     B1,X:(R3+N3)
+$015C: MOVE     X:(R5),N3
+$015D: NOP
+$015E: MOVE     A1,X:(R3+N3)
+$015F: RTS
+
+//Film Block Error Correction Subroutine @ $0200
+$0200: CLR      A 
+$0201: MOVE     A,X:(R3)
+$0202: BCLR     #3,X:<<$FFE4        //Reset AHA4011B and begin initialization for first layer of ECC
+$0203: MOVEP    #D30000,Y:<<$FFE0   //Set Erasure Multiplier
+$0205: MOVEP    #940000,Y:<<$FFE0   //Set Error Threshold
+$0207: MOVEP    #940000,Y:<<$FFE0   //Set Check Bytes - 20
+$0209: MOVEP    #430000,Y:<<$FFE0   //Set Message Bytes - 67
+$020B: MOVEP    #570000,Y:<<$FFE0   //Set Block Length - 87
+$020D: MOVEP    #2C0000,Y:<<$FFE0   //Set Control Byte
+$020F: BSET     #3,X:<<$FFE4        //End Reset/Initialization sequence
+$0210: MOVE     #000057,N1
+$0212: MOVE     #000C5C,R0
+$0214: JSR      $132
+$0215: MOVE     R5,Y:$02
+$0216: MOVE     #000CB3,R0
+$0218: JSR      $132
+$0219: MOVE     R5,Y:$03
+$021A: MOVE     #000C5C,R0
+$021C: MOVE     Y:$02,R5
+$021D: JSR      $13E
+$021E: MOVE     #000D0A,R0
+$0220: JSR      $132
+$0221: MOVE     R5,Y:$04
+$0222: MOVE     #000CB3,R0
+$0224: MOVE     Y:$03,R5
+$0225: JSR      $13E
+$0226: MOVE     #000D61,R0
+$0228: JSR      $132
+$0229: MOVE     R5,Y:$05
+$022A: MOVE     #000D0A,R0
+$022C: MOVE     Y:$04,R5
+$022D: JSR      $13E
+$022E: MOVE     #000DB8,R0
+$0230: JSR      $132
+$0231: MOVE     R5,Y:$06
+$0232: MOVE     #000D61,R0
+$0234: MOVE     Y:$05,R5
+$0235: JSR      $13E
+$0236: MOVE     #000E0F,R0
+$0238: JSR      $132
+$0239: MOVE     R5,Y:$07
+$023A: MOVE     #000DB8,R0
+$023C: MOVE     Y:$06,R5
+$023D: JSR      $13E
+$023E: MOVE     #000E66,R0
+$0240: JSR      $132
+$0241: MOVE     R5,Y:$08
+$0242: MOVE     #000E0F,R0
+$0244: MOVE     Y:$07,R5
+$0245: JSR      $13E
+$0246: MOVE     #000EBD,R0
+$0248: JSR      $132
+$0249: MOVE     R5,Y:$09
+$024A: MOVE     #000E66,R0
+$024C: MOVE     Y:$08,R5
+$024D: JSR      $13E
+$024E: MOVE     #000EBD,R0
+$0250: MOVE     Y:$09,R5
+$0251: JSR      $13E
+$0252: BCLR     #3,X:<<$FFE4        //Reset AHA4011B and begin initialization for second layer of ECC
+$0253: MOVEP    #D90000,Y:<<$FFE0   //Set Erasure Multiplier
+$0255: MOVEP    #940000,Y:<<$FFE0   //Set Error Threshold
+$0257: MOVEP    #940000,Y:<<$FFE0   //Set Check Bytes - 20
+$0259: MOVEP    #9D0000,Y:<<$FFE0   //Set Message Bytes - 157
+$025B: MOVEP    #B10000,Y:<<$FFE0   //Set Block Length - 177
+$025D: MOVEP    #2C0000,Y:<<$FFE0   //Set Control Byte
+$025F: BSET     #3,X:<<$FFE4        //End Reset/Initialization sequence
+$0260: MOVE     #0000B1,N1
+$0262: MOVE     #000F14,R0
+$0264: JSR      $132
+$0265: MOVE     R5,Y:$02
+$0266: JSET     #7,X:<<$FFE4,$0266  //Wait for AHA4011B to assert output ready pin
+$0268: MOVE     #000FC5,R0
+$026A: JSR      $132
+$026B: MOVE     R5,Y:$03
+$026C: MOVE     #000F14,R0
+$026E: MOVE     Y:$02,R5
+$026F: JSR      $13E
+$0270: MOVE     #001076,R0
+$0272: JSR      $132
+$0273: MOVE     R5,Y:$04
+$0274: MOVE     #000FC5,R0
+$0276: MOVE     Y:$03,R5
+$0277: JSR      $13E
+$0278: MOVE     #001076,R0
+$027A: MOVE     Y:$04,R5
+$027B: JSR      $13E
+$027C: MOVE     #2B3700,X0
+$027E: MOVE     X0,X:(R1)+
+$027F: MOVE     #693800,B
+$0281: MOVE     #000200,Y0
+$0283: MOVE     #0003FF,Y1
+$0285: MOVE     #001127,R0
+$0287: MOVE     #0000FE,N1
+$0289: MOVE     X:(R0)+,X0
+$028A: DO       N1,$0299
+$028C: MPY      +Y0,X0,A        B1,X:(R1)+
+$028D: AND      Y1,A 
+$028E: TFR      Y1,A    A1,N3
+$028F: AND      X0,A    #FF0000,B1
+$0291: MOVE     X:(R3+N3),X1
+$0292: AND      X1,B    A1,N3
+$0293: MOVE     #008000,X1
+$0295: MOVE     X:(R3+N3),X0
+$0296: MPY      +X1,X0,A        #00FF00,X1
+$0298: AND      X1,A 
+$0299: ADD      A,B     X:(R0)+,X0
+$029A: MOVE     B1,X:(R1)+
+$029B: RTS
+
+
 $029C: MOVE     #1D,N0
 $029D: MOVEC    X:$3E,M0
 $029E: MOVE     X:$3C,R0
@@ -871,6 +1024,7 @@ $05D2: MOVE     Y:(R4)+,A2
 $05D3: MOVE     Y:(R4)+,R0
 $05D4: RTI
 
+//Entry Point 0xDDB9, program counter start 0x05D5 - end PC 0x07EA
 $05D5: MOVE     Y0,Y:-(R4)
 $05D6: MOVEP    X:<<$FFF1,Y0
 $05D7: MOVE     Y:(R4)+,Y0
@@ -911,3 +1065,9 @@ $060E: MOVE     #000612,R0
 $0610: JMP      P:$07E1
 $0612: MOVEP    X:<<$FFF5,X0
 $0613: MOVE     X:$05,A
+
+//Entry point 0x589C start program counter 0x0B1E end program counter 0xCCF
+
+//Entry point 0x5E14 start program counter 0xCD0 end program counter 0xCE9
+
+//Entry point 0x5E73 start program counter 0xCEA end program counter 0xD3A

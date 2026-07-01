@@ -295,6 +295,7 @@ $015E: MOVE     A1,X:(R3+N3)
 $015F: RTS
 
 //Film Block Error Correction Subroutine @ $0200
+//Perform first layer of error correction
 $0200: CLR      A 
 $0201: MOVE     A,X:(R3)
 $0202: BCLR     #3,X:<<$FFE4        //Reset AHA4011B and begin initialization for first layer of ECC
@@ -307,10 +308,10 @@ $020D: MOVEP    #2C0000,Y:<<$FFE0   //Set Control Byte
 $020F: BSET     #3,X:<<$FFE4        //End Reset/Initialization sequence
 $0210: MOVE     #000057,N1
 $0212: MOVE     #000C5C,R0
-$0214: JSR      $132
-$0215: MOVE     R5,Y:$02
+$0214: JSR      $132                //Clock first message block into AHA4011B
+$0215: MOVE     R5,Y:$02            //Store number of erasures
 $0216: MOVE     #000CB3,R0
-$0218: JSR      $132
+$0218: JSR      $132                //Clock next message block into AHA4011B
 $0219: MOVE     R5,Y:$03
 $021A: MOVE     #000C5C,R0
 $021C: MOVE     Y:$02,R5
@@ -354,6 +355,8 @@ $024D: JSR      $13E
 $024E: MOVE     #000EBD,R0
 $0250: MOVE     Y:$09,R5
 $0251: JSR      $13E
+
+//Perform second layer of error correction
 $0252: BCLR     #3,X:<<$FFE4        //Reset AHA4011B and begin initialization for second layer of ECC
 $0253: MOVEP    #D90000,Y:<<$FFE0   //Set Erasure Multiplier
 $0255: MOVEP    #940000,Y:<<$FFE0   //Set Error Threshold
@@ -382,26 +385,28 @@ $0277: JSR      $13E
 $0278: MOVE     #001076,R0
 $027A: MOVE     Y:$04,R5
 $027B: JSR      $13E
+
+//This seems to reformat the block into the printmaster format
 $027C: MOVE     #2B3700,X0
-$027E: MOVE     X0,X:(R1)+
-$027F: MOVE     #693800,B
+$027E: MOVE     X0,X:(R1)+          //First 2 bytes of "printmaster" block are 0x2B37
+$027F: MOVE     #693800,B           //Second 2 bytes of "printmaster" block are 0x6938
 $0281: MOVE     #000200,Y0
 $0283: MOVE     #0003FF,Y1
 $0285: MOVE     #001127,R0
 $0287: MOVE     #0000FE,N1
-$0289: MOVE     X:(R0)+,X0
-$028A: DO       N1,$0299
-$028C: MPY      +Y0,X0,A        B1,X:(R1)+
-$028D: AND      Y1,A 
-$028E: TFR      Y1,A    A1,N3
-$028F: AND      X0,A    #FF0000,B1
-$0291: MOVE     X:(R3+N3),X1
-$0292: AND      X1,B    A1,N3
-$0293: MOVE     #008000,X1
-$0295: MOVE     X:(R3+N3),X0
-$0296: MPY      +X1,X0,A        #00FF00,X1
-$0298: AND      X1,A 
-$0299: ADD      A,B     X:(R0)+,X0
+$0289: MOVE     X:(R0)+,X0          //Loads first index
+$028A: DO       N1,$0299            //Runs this loop 254 times
+$028C: MPY      Y0,X0,A B1,X:(R1)+  //Bit shift index 14 bits to the right, loads B1 into the output block location
+$028D: AND      Y1,A
+$028E: TFR      Y1,A    A1,N3       //N3 contains the upper 10 bits of the index, A now contains $0003FF
+$028F: AND      X0,A    #FF0000,B1  //A contains the bottom 10 bits of the index
+$0291: MOVE     X:(R3+N3),X1        //X1 contains the byte at the "upper index"
+$0292: AND      X1,B    A1,N3       //Retain only the MSB of X1, load address offset register with "lower" index
+$0293: MOVE     #008000,X1          
+$0295: MOVE     X:(R3+N3),X0        //X0 contains the byte at the "upper index"
+$0296: MPY      X1,X0,A #00FF00,X1  //Bit shift X0 1 byte to the right
+$0298: AND      X1,A                //Retain only the middle byte
+$0299: ADD      A,B     X:(R0)+,X0  //B now contains the bytes at the "upper" and "lower" indices, respectively 0xFFFF00, loads next index
 $029A: MOVE     B1,X:(R1)+
 $029B: RTS
 
@@ -751,7 +756,7 @@ $0473: MOVE     #000404,R0
 $0475: MOVE     R0,X:$34
 $0476: JMP      P:(R0)
 
-//7 Segment Display subroutine @$0477
+//7 Segment Display subroutine @ $0477
 $0477: MOVE     #00000F,A
 $0479: AND      X0,A    #000DCF,R0
 $047B: MOVE     A,N0
